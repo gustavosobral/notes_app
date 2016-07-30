@@ -12,6 +12,11 @@ module.exports = {
       path.resolve('./src')
     ]
   },
+  module: {
+    loaders: [
+      { test: /\.html$/, loaders: ['ngtemplate', 'html?root=true&interpolate'] }
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html',
