@@ -1,0 +1,31 @@
+{
+  "name": "notes_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gustavosobral/notes_app.git"
+  },
+  "keywords": [
+    "notes",
+    "spa"
+  ],
+  "author": "Gustavo Sobral",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/gustavosobral/notes_app/issues"
+  },
+  "homepage": "https://github.com/gustavosobral/notes_app#readme",
+  "dependencies": {
+    "angular": "^1.5.8"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^2.22.0",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
