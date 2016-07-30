@@ -4,3 +4,31 @@ body { padding-top: 70px; }
   h4 { margin-top: 0; }
   .fa.pull-right { padding-top: 2px; }
 }
+
+.ta-toolbar {
+  background-color: #F0F0F0;
+  padding: 10px 10px 5px;
+  margin-left: 0px;
+  border: 1px solid #EEE;  
+  .btn-group { margin-bottom: 5px; }
+}
+
+.btn-toolbar>.btn, .btn-toolbar>.btn-group, .btn-toolbar>.input-group {
+  margin-left: 5px;
+}
+
+.ta-editor, .white-box {
+  border-radius: 0;
+  padding: 10px;
+  background-color: #FFF;
+  border: 1px solid #EEE;
+  height: auto;
+}
+
+.ta-scroll-window > .ta-bind {
+  height: auto;
+  min-height: 300px;
+  padding: 6px 12px;
+}
+
+#note-buttons { margin-top: 20px; }
