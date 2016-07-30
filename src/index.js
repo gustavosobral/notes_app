@@ -7,7 +7,9 @@ var note    = require('note');
 
 var Routes   = require('./routes.js');
 
+require('assets/scss/styles.scss');
 require('textangular/dist/textAngular-sanitize.min');
+
 var app = angular.module('notesApp', [
   home, note, uiRouter, textAngular
 ]);

@@ -8,7 +8,7 @@ $ npm install
 ```
 ## Development
 
-Run `$ npm run serve` to starts the webpack-dev-server. Then, access him on: http://localhost:8080/
+Run `$ npm run server` to starts the webpack-dev-server. Then, access him on: http://localhost:8080/
 
 ## Production
 

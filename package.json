@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --progress",
-    "serve": "webpack-dev-server"
+    "server": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -27,9 +27,13 @@
     "textangular": "^1.5.3"
   },
   "devDependencies": {
+    "css-loader": "^0.23.1",
     "html-loader": "^0.4.3",
     "html-webpack-plugin": "^2.22.0",
     "ngtemplate-loader": "^1.3.1",
+    "node-sass": "^3.8.0",
+    "sass-loader": "^4.0.0",
+    "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   }

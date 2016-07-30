@@ -14,7 +14,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.html$/, loaders: ['ngtemplate', 'html?root=true&interpolate'] }
+      { test: /\.html$/, loaders: ['ngtemplate', 'html?root=true&interpolate'] },
+      { test: /\.scss$/, loaders: ["style", "css", "sass"] }
     ]
   },
   plugins: [
