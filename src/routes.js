@@ -7,13 +7,16 @@ function Routes($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: "/",
-      templateUrl: homeTemplate
+      templateUrl: homeTemplate,
+      controller: 'HomeController',
+      controllerAs: 'homeCtrl'
     })
     .state('note', {
       url: "/note",
-      templateUrl: noteTemplate
+      templateUrl: noteTemplate,
+      controller: 'NoteController',
+      controllerAs: 'noteCtrl'
     })
-
 }
 
 module.exports = Routes
