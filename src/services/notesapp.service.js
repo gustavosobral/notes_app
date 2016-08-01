@@ -3,7 +3,10 @@ function NotesappService($http, $log) {
 
   return {
     getNotes: getNotes,
-    getNote: getNote
+    getNote: getNote,
+    createNote: createNote,
+    updateNote: updateNote,
+    deleteNote: deleteNote
   };
 
   function getNotes(q) {
@@ -16,7 +19,7 @@ function NotesappService($http, $log) {
     }
 
     function getNotesFailed(error) {
-      $log.error('Failed for getNotes' + error.data);
+      $log.error('Failed for getNotes: ' + error.data);
     }
   }
 
@@ -30,7 +33,53 @@ function NotesappService($http, $log) {
     }
 
     function getNoteFailed(error) {
-      $log.error('Failed for getNote' + error.data);
+      $log.error('Failed for getNote: ' + error.data);
+    }
+  }
+
+  function createNote(note) {
+    data = {}
+    data.note = note;
+    return $http.post(url, data)
+      .then(createNoteComplete)
+      .catch(createNoteFailed);
+
+    function createNoteComplete(response) {
+      $log.info('Note created successfully!');
+    }
+
+    function createNoteFailed(error) {
+      $log.error('Failed for createNote: ' + error.data);
+    }
+  }
+
+  function updateNote(note) {
+    data = {}
+    data.note = note;
+    return $http.put(url + '/' + note.id, data)
+      .then(updateNoteComplete)
+      .catch(updateNoteFailed);
+
+    function updateNoteComplete(response) {
+      $log.info('Note updated successfully!');
+    }
+
+    function updateNoteFailed(error) {
+      $log.error('Failed for updateNote: ' + error.data);
+    }
+  }
+
+  function deleteNote(id) {
+    return $http.delete(url + '/' + id)
+      .then(deleteNoteComplete)
+      .catch(deleteNoteFailed);
+
+    function deleteNoteComplete(response) {
+      $log.info('Note deleted successfully!');
+    }
+
+    function deleteNoteFailed(error) {
+      $log.error('Failed for deleteNote: ' + error.data);
     }
   }
 }
