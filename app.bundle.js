@@ -49,12 +49,12 @@
 	var textAngular     = __webpack_require__(4);
 
 	var home    = __webpack_require__(7);
-	var note    = __webpack_require__(11);
+	var note    = __webpack_require__(14);
 
-	var Routes   = __webpack_require__(13);
+	var Routes   = __webpack_require__(16);
 
-	__webpack_require__(16);
-	__webpack_require__(20);
+	__webpack_require__(19);
+	__webpack_require__(23);
 
 	var app = angular.module('notesApp', [
 	  home, note, uiRouter, textAngular
@@ -44569,9 +44569,13 @@
 	var angular   = __webpack_require__(1);
 	var services  = __webpack_require__(8);
 
-	var home = angular.module('notesApp.home', [services]);
+	var navbar = __webpack_require__(10);
 
-	var HomeController = __webpack_require__(10);
+	var home = angular.module('notesApp.home', [
+	  services, navbar
+	]);
+
+	var HomeController = __webpack_require__(13);
 	home.controller('HomeController', HomeController);
 
 	module.exports = home.name;
@@ -44600,11 +44604,11 @@
 
 	  return {
 	    getNotes: getNotes,
-	    getNote, getNote
+	    getNote: getNote
 	  };
 
-	  function getNotes() {
-	    return $http.get(url)
+	  function getNotes(q) {
+	    return $http.get(url + '?q=' + q)
 	      .then(getNotesComplete)
 	      .catch(getNotesFailed);
 
@@ -44637,9 +44641,61 @@
 
 /***/ },
 /* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var angular = __webpack_require__(1);
+
+	var navbar = angular.module('notesApp.components.navbar', []);
+
+	var navbarComponent = __webpack_require__(11);
+	navbar.directive('navbar', navbarComponent);
+
+	module.exports = navbar.name;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var navbarTemplate = __webpack_require__(12);
+
+	function NavbarComponent() {
+	  return {
+	    restrict: 'E',
+	    templateUrl: navbarTemplate,
+	    controller: NavbarComponentController,
+	    controllerAs: 'navbarCtrl'
+	  }
+
+	  function NavbarComponentController($state) {
+	    var vm = this;
+	    vm.query;
+
+	    vm.searchNote = searchNote;
+
+	    function searchNote() {
+	      $state.go('home', { q: vm.query })
+	    }
+	  }
+	}
+
+	module.exports = NavbarComponent;
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports) {
 
-	function HomeController($log, $state, NotesappService) {
+	var path = '/home/gustavo/dev/personal/notes_app/src/components/navbar/navbar.template.html';
+	var html = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n  <div class=\"container\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">Notes App</a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"navbar-collapse\">\n      <div class=\"row text-right\">\n        <div class=\"col-md-4 col-md-offset-3\">\n          <form class=\"navbar-form navbar-left\">\n            <div class=\"form-group\">\n              <input type=\"text\" class=\"form-control\" placeholder=\"Buscar\" ng-model=\"navbarCtrl.query\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\" ng-click=\"navbarCtrl.searchNote()\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></button>\n          </form>\n        </div>\n        <div class=\"col-md-3 text-right\">\n          <ul class=\"nav navbar-nav navbar-right\">\n            <li class=\"disabled\"><a>Login</a></li>\n          </ul>\n        </div>\n      </div> \n    </div>\n  </div>\n</nav>\n";
+	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
+	module.exports = path;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	function HomeController($log, $state, $stateParams, NotesappService) {
 	  var vm = this;
 	  vm.notes = [];
 
@@ -44649,11 +44705,11 @@
 
 	  // Controller initailization
 	  function initialize() {
-	    getNotes();
+	    getNotes($stateParams.q);
 	  }
 
-	  function getNotes() {
-	    NotesappService.getNotes()
+	  function getNotes(q) {
+	    NotesappService.getNotes(q)
 	      .then(function(notes) {
 	        vm.notes = notes;
 
@@ -44682,22 +44738,26 @@
 
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular   = __webpack_require__(1);
 	var services  = __webpack_require__(8);
 
-	var note = angular.module('notesApp.note', [services]);
+	var navbar = __webpack_require__(10);
 
-	var NoteController = __webpack_require__(12);
+	var note = angular.module('notesApp.note', [
+	  services, navbar
+	]);
+
+	var NoteController = __webpack_require__(15);
 	note.controller('NoteController', NoteController);
 
 	module.exports = note.name;
 
 
 /***/ },
-/* 12 */
+/* 15 */
 /***/ function(module, exports) {
 
 	function NoteController($log, $stateParams, NotesappService) {
@@ -44736,18 +44796,18 @@
 
 
 /***/ },
-/* 13 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var homeTemplate = __webpack_require__(14);
-	var noteTemplate = __webpack_require__(15);
+	var homeTemplate = __webpack_require__(17);
+	var noteTemplate = __webpack_require__(18);
 
 	function Routes($stateProvider, $urlRouterProvider) {
 	  $urlRouterProvider.otherwise("/");
 
 	  $stateProvider
 	    .state('home', {
-	      url: "/",
+	      url: "/{q}",
 	      templateUrl: homeTemplate,
 	      controller: 'HomeController',
 	      controllerAs: 'homeCtrl'
@@ -44764,34 +44824,34 @@
 
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/home/home.template.html';
-	var html = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n  <div class=\"container\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">Notes App</a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"navbar-collapse\">\n      <div class=\"row text-right\">\n        <div class=\"col-md-4 col-md-offset-3\">\n          <form class=\"navbar-form navbar-left\">\n            <div class=\"form-group\">\n              <input type=\"text\" class=\"form-control\" placeholder=\"Buscar\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></button>\n          </form>\n        </div>\n        <div class=\"col-md-3 text-right\">\n          <ul class=\"nav navbar-nav navbar-right\">\n            <li class=\"disabled\"><a>Login</a></li>\n          </ul>\n        </div>\n      </div> \n    </div>\n  </div>\n</nav>\n<section ng-init=\"statusFilter = ''; strict = false\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-3\">\n        <div class=\"list-group\">\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = ''; strict = false\">\n            <i class=\"fa fa-files-o\" aria-hidden=\"true\"></i> Todas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'active'; strict = true\">\n            <i class=\"fa fa-bolt\" aria-hidden=\"true\"></i> Ativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'inactive'; strict = true\">\n            <i class=\"fa fa-ban\" aria-hidden=\"true\"></i> Inativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'draft'; strict = true\">\n            <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Rascunhos\n          </a>\n          <a href=\"#\" class=\"list-group-item disabled\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i> Minhas\n          </a>\n        </div>\n        <br>\n        <div class=\"text-center\">\n          <a href=\"#/note/\" class=\"btn btn-lg btn-success\">\n            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i> Nova Nota\n          </a>\n        </div>\n        <br>\n      </div>\n      <div class=\"col-md-9\">\n        <div class=\"row\">\n          <div ng-repeat=\"note in homeCtrl.notes | filter:statusFilter:strict:comparator:status\">          \n            <div class=\"col-sm-4 col-lg-4 col-md-4\">\n              <div class=\"thumbnail\">\n                <div class=\"caption\">\n                  <i class=\"fa {{ note.faClass }} pull-right\" aria-hidden=\"true\"></i>\n                  <h4><a href=\"\" ng-click=\"homeCtrl.goNote(note.id)\">{{ note.title }}</a></h4>\n                  <p>{{ note.body }}</p>\n                </div>\n                <div class=\"text-right\">\n                  <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ note.views }}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
+	var html = "<navbar></navbar>\n\n<section ng-init=\"statusFilter = ''; strict = false\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-3\">\n        <div class=\"list-group\">\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = ''; strict = false\">\n            <i class=\"fa fa-files-o\" aria-hidden=\"true\"></i> Todas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'active'; strict = true\">\n            <i class=\"fa fa-bolt\" aria-hidden=\"true\"></i> Ativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'inactive'; strict = true\">\n            <i class=\"fa fa-ban\" aria-hidden=\"true\"></i> Inativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'draft'; strict = true\">\n            <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Rascunhos\n          </a>\n          <a href=\"#\" class=\"list-group-item disabled\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i> Minhas\n          </a>\n        </div>\n        <br>\n        <div class=\"text-center\">\n          <a href=\"#/note/\" class=\"btn btn-lg btn-success\">\n            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i> Nova Nota\n          </a>\n        </div>\n        <br>\n      </div>\n      <div class=\"col-md-9\">\n        <div class=\"row\">\n          <div ng-repeat=\"note in homeCtrl.notes | filter:statusFilter:strict:comparator:status\">          \n            <div class=\"col-sm-4 col-lg-4 col-md-4\">\n              <div class=\"thumbnail\">\n                <div class=\"caption\">\n                  <i class=\"fa {{ note.faClass }} pull-right\" aria-hidden=\"true\"></i>\n                  <h4><a href=\"\" ng-click=\"homeCtrl.goNote(note.id)\">{{ note.title }}</a></h4>\n                  <p>{{ note.body }}</p>\n                </div>\n                <div class=\"text-right\">\n                  <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ note.views }}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/note/note.template.html';
-	var html = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n  <div class=\"container\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">Notes App</a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"navbar-collapse\">\n      <div class=\"row text-right\">\n        <div class=\"col-md-4 col-md-offset-3\">\n          <form class=\"navbar-form navbar-left\">\n            <div class=\"form-group\">\n              <input type=\"text\" class=\"form-control\" placeholder=\"Buscar\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></button>\n          </form>\n        </div>\n        <div class=\"col-md-3 text-right\">\n          <ul class=\"nav navbar-nav navbar-right\">\n            <li class=\"disabled\"><a>Login</a></li>\n          </ul>\n        </div>\n      </div> \n    </div>\n  </div>\n</nav>\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <div id=\"note-buttons\" class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ noteCtrl.note.views }}</p>\n          </div>\n        </div>\n        <text-angular ng-model=\"noteCtrl.note.body\"></text-angular>\n        <div id=\"note-buttons\" class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <button type=\"button\" class=\"btn btn-lg btn-danger\" ng-click=\"noteCtrl.excludeNote()\">Excluir</button>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <button type=\"button\" class=\"btn btn-lg btn-success\" ng-click=\"noteCtrl.saveNote()\">Salvar</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
+	var html = "<navbar></navbar>\n\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <div id=\"note-buttons\" class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ noteCtrl.note.views }}</p>\n          </div>\n        </div>\n        <text-angular ng-model=\"noteCtrl.note.body\"></text-angular>\n        <div id=\"note-buttons\" class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <button type=\"button\" class=\"btn btn-lg btn-danger\" ng-click=\"noteCtrl.excludeNote()\">Excluir</button>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <button type=\"button\" class=\"btn btn-lg btn-success\" ng-click=\"noteCtrl.saveNote()\">Salvar</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(17);
+	var content = __webpack_require__(20);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(19)(content, {});
+	var update = __webpack_require__(22)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -44808,10 +44868,10 @@
 	}
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(18)();
+	exports = module.exports = __webpack_require__(21)();
 	// imports
 
 
@@ -44822,7 +44882,7 @@
 
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/*
@@ -44878,7 +44938,7 @@
 
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -45130,7 +45190,7 @@
 
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports) {
 
 	/**
