@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-3 text-right">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Gustavo Sobral</a></li>
+            <li class="disabled"><a>Login</a></li>
           </ul>
         </div>
       </div> 
@@ -45,7 +45,7 @@
           <a href="#" class="list-group-item" ng-click="statusFilter = 'draft'; strict = true">
             <i class="fa fa-pencil" aria-hidden="true"></i> Rascunhos
           </a>
-          <a href="#" class="list-group-item">
+          <a href="#" class="list-group-item disabled">
             <i class="fa fa-star" aria-hidden="true"></i> Minhas
           </a>
         </div>
@@ -68,7 +68,7 @@
                   <p>{{ note.body }}</p>
                 </div>
                 <div class="text-right">
-                  <p><i class="fa fa-eye" aria-hidden="true"></i> {{ note.view_counter }}</p>
+                  <p><i class="fa fa-eye" aria-hidden="true"></i> {{ note.views }}</p>
                 </div>
               </div>
             </div>
