@@ -51,7 +51,7 @@
         </div>
         <br>
         <div class="text-center">
-          <a href="#/note" class="btn btn-lg btn-success">
+          <a href="#/note/" class="btn btn-lg btn-success">
             <i class="fa fa-plus" aria-hidden="true"></i> Nova Nota
           </a>
         </div>
@@ -64,7 +64,7 @@
               <div class="thumbnail">
                 <div class="caption">
                   <i class="fa {{ note.faClass }} pull-right" aria-hidden="true"></i>
-                  <h4><a href="#">{{ note.title }}</a></h4>
+                  <h4><a href="" ng-click="homeCtrl.goNote(note.id)">{{ note.title }}</a></h4>
                   <p>{{ note.body }}</p>
                 </div>
                 <div class="text-right">

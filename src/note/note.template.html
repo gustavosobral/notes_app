@@ -34,19 +34,19 @@
       <div class="col-md-10 col-md-offset-1">
         <div id="note-buttons" class="row">
           <div class="col-xs-6 text-left">
-            <p><b>Primeira visualização:</b> 08:45:30 10/12/2016</p>
+            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>
           </div>
           <div class="col-xs-6 text-right">
-            <p><i class="fa fa-eye" aria-hidden="true"></i> 15</p>
+            <p><i class="fa fa-eye" aria-hidden="true"></i> {{ noteCtrl.note.views }}</p>
           </div>
         </div>
-        <text-angular ng-model="htmlVariable"></text-angular>
+        <text-angular ng-model="noteCtrl.note.body"></text-angular>
         <div id="note-buttons" class="row">
           <div class="col-xs-6 text-left">
-            <button type="button" class="btn btn-lg btn-danger">Excluir</button>
+            <button type="button" class="btn btn-lg btn-danger" ng-click="noteCtrl.excludeNote()">Excluir</button>
           </div>
           <div class="col-xs-6 text-right">
-            <button type="button" class="btn btn-lg btn-success">Salvar</button>
+            <button type="button" class="btn btn-lg btn-success" ng-click="noteCtrl.saveNote()">Salvar</button>
           </div>
         </div>
       </div>

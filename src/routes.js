@@ -12,7 +12,7 @@ function Routes($stateProvider, $urlRouterProvider) {
       controllerAs: 'homeCtrl'
     })
     .state('note', {
-      url: "/note",
+      url: "/note/{id}",
       templateUrl: noteTemplate,
       controller: 'NoteController',
       controllerAs: 'noteCtrl'

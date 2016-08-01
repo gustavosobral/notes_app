@@ -1,6 +1,8 @@
-function HomeController($log, NotesappService) {
+function HomeController($log, $state, NotesappService) {
   var vm = this;
   vm.notes = [];
+
+  vm.goNote = goNote;
 
   initialize();
 
@@ -28,6 +30,10 @@ function HomeController($log, NotesappService) {
           }          
         }
     });
+  }
+
+  function goNote(id) {
+    $state.go('note', { id: id });
   }
 }
 
