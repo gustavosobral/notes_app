@@ -32,16 +32,22 @@
       <div class="col-md-9">
         <div class="row">
           <div ng-repeat="note in homeCtrl.notes | filter:statusFilter:strict:comparator:status | limitTo:12">          
-            <div class="col-sm-4 col-lg-4 col-md-4">
+            <div class="col-sm-6 col-lg-6 col-md-6">
               <div class="thumbnail">
                 <div class="caption">
                   <i class="fa {{ note.faClass }} pull-right" aria-hidden="true"></i>
-                  <h4><a href="" ng-click="homeCtrl.goNote(note.id)">{{ note.title | limitTo:50 }}</a></h4>
-                  <p class="note-body">{{ note.body | limitTo:200 }}</p>
+                  <h4 class="note-title"><a href="">{{ note.title | limitTo:30 }}</a></h4>
+                  <hr>
+                  <div class="note-body" ng-bind-html="note.body | limitTo:460"></div>
                 </div>
-                <div class="text-right">
-                  <p><i class="fa fa-eye" aria-hidden="true"></i> {{ note.views }}</p>
-                </div>
+                <div class="note-card-footer row">
+                  <div class="col-xs-6 text-left">
+                    <a ng-click="homeCtrl.goNote(note.id)" class="btn btn-xs btn-info">Editar</a>
+                  </div>
+                  <div class="col-xs-6 text-right">
+                    <p><i class="fa fa-eye" aria-hidden="true"></i> {{ note.views }}</p>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>

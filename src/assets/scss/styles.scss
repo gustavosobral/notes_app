@@ -3,7 +3,10 @@ body { padding-top: 70px; }
 .thumbnail {
   min-height: 240px;
   h4 { margin-top: 0; }
-  .fa.pull-right { padding-top: 2px; }
+  hr { margin: 0 0 10px 0; }
+  .fa.pull-right { 
+    margin-left: .4em;
+    padding-top: 2px; }
 }
 
 .list-group {
@@ -40,7 +43,16 @@ body { padding-top: 70px; }
 
 #navbar-search { margin-top: 8.5px; }
 
-.note-body { min-height: 120px; }
+.note-title { min-height: 20px; }
+.note-body {
+  overflow: auto;
+  text-overflow: ellipsis;
+  min-height: 170px;
+  max-height: 170px; }
+.note-card-footer {
+  margin-top: 5px;
+  padding: 0 10px;
+}
 .note-footer { margin-top: 20px; }
 
 #status-selector { padding-right: 25px; }
