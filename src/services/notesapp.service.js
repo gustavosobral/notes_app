@@ -4,6 +4,7 @@ function NotesappService($http, $log) {
   return {
     getNotes: getNotes,
     getNote: getNote,
+    createNote: createNote,
     deleteNote: deleteNote
   };
 
@@ -35,8 +36,20 @@ function NotesappService($http, $log) {
     }
   }
 
-  function createNote() {
-    // TODO
+  function createNote(note) {
+    data = {}
+    data.note = note;
+    return $http.post(url, data)
+      .then(createNoteComplete)
+      .catch(createNoteFailed);
+
+    function createNoteComplete(response) {
+      $log.info('Note created successfully!');
+    }
+
+    function createNoteFailed(error) {
+      $log.error('Failed for createNote: ' + error.data);
+    }
   }
 
   function updateNote() {

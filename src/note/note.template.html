@@ -4,7 +4,24 @@
   <div class="container">
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
-        <div id="note-buttons" class="row">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label for="inputTitle" class="col-sm-1 control-label">Título</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="inputTitle" placeholder="Título" ng-model="noteCtrl.note.title">
+            </div>
+            <label class="col-sm-1 control-label">Status</label>
+            <div id="status-selector" class="col-sm-2">
+              <select class="form-control" ng-model="noteCtrl.noteStatus">
+                <option>Ativa</option>
+                <option>Inativa</option>
+                <option>Rascunho</option>
+              </select>
+            </div>
+          </div>
+        </form>
+        <text-angular ng-model="noteCtrl.note.body"></text-angular>
+        <div class="row note-footer" ng-if="noteCtrl.note.id">
           <div class="col-xs-6 text-left">
             <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>
           </div>
@@ -12,8 +29,7 @@
             <p><i class="fa fa-eye" aria-hidden="true"></i> {{ noteCtrl.note.views }}</p>
           </div>
         </div>
-        <text-angular ng-model="noteCtrl.note.body"></text-angular>
-        <div id="note-buttons" class="row">
+        <div class="row note-footer">
           <div class="col-xs-6 text-left">
             <div ng-if="noteCtrl.note.id">
               <button type="button" class="btn btn-lg btn-danger" ng-click="noteCtrl.excludeNote()">Excluir</button>
