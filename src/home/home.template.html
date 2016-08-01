@@ -28,18 +28,21 @@
     </div>
   </div>
 </nav>
-<section>
+<section ng-init="statusFilter = ''; strict = false">
   <div class="container">
     <div class="row">
       <div class="col-md-3">
         <div class="list-group">
-          <a href="#" class="list-group-item">
+          <a href="#" class="list-group-item" ng-click="statusFilter = ''; strict = false">
+            <i class="fa fa-files-o" aria-hidden="true"></i> Todas
+          </a>
+          <a href="#" class="list-group-item" ng-click="statusFilter = 'active'; strict = true">
             <i class="fa fa-bolt" aria-hidden="true"></i> Ativas
           </a>
-          <a href="#" class="list-group-item">
+          <a href="#" class="list-group-item" ng-click="statusFilter = 'inactive'; strict = true">
             <i class="fa fa-ban" aria-hidden="true"></i> Inativas
           </a>
-          <a href="#" class="list-group-item">
+          <a href="#" class="list-group-item" ng-click="statusFilter = 'draft'; strict = true">
             <i class="fa fa-pencil" aria-hidden="true"></i> Rascunhos
           </a>
           <a href="#" class="list-group-item">
@@ -56,7 +59,7 @@
       </div>
       <div class="col-md-9">
         <div class="row">
-          <div ng-repeat="note in homeCtrl.notes">          
+          <div ng-repeat="note in homeCtrl.notes | filter:statusFilter:strict:comparator:status">          
             <div class="col-sm-4 col-lg-4 col-md-4">
               <div class="thumbnail">
                 <div class="caption">
