@@ -44604,7 +44604,10 @@
 
 	  return {
 	    getNotes: getNotes,
-	    getNote: getNote
+	    getNote: getNote,
+	    createNote: createNote,
+	    updateNote: updateNote,
+	    deleteNote: deleteNote
 	  };
 
 	  function getNotes(q) {
@@ -44617,7 +44620,7 @@
 	    }
 
 	    function getNotesFailed(error) {
-	      $log.error('Failed for getNotes' + error.data);
+	      $log.error('Failed for getNotes: ' + error.data);
 	    }
 	  }
 
@@ -44631,7 +44634,53 @@
 	    }
 
 	    function getNoteFailed(error) {
-	      $log.error('Failed for getNote' + error.data);
+	      $log.error('Failed for getNote: ' + error.data);
+	    }
+	  }
+
+	  function createNote(note) {
+	    data = {}
+	    data.note = note;
+	    return $http.post(url, data)
+	      .then(createNoteComplete)
+	      .catch(createNoteFailed);
+
+	    function createNoteComplete(response) {
+	      $log.info('Note created successfully!');
+	    }
+
+	    function createNoteFailed(error) {
+	      $log.error('Failed for createNote: ' + error.data);
+	    }
+	  }
+
+	  function updateNote(note) {
+	    data = {}
+	    data.note = note;
+	    return $http.put(url + '/' + note.id, data)
+	      .then(updateNoteComplete)
+	      .catch(updateNoteFailed);
+
+	    function updateNoteComplete(response) {
+	      $log.info('Note updated successfully!');
+	    }
+
+	    function updateNoteFailed(error) {
+	      $log.error('Failed for updateNote: ' + error.data);
+	    }
+	  }
+
+	  function deleteNote(id) {
+	    return $http.delete(url + '/' + id)
+	      .then(deleteNoteComplete)
+	      .catch(deleteNoteFailed);
+
+	    function deleteNoteComplete(response) {
+	      $log.info('Note deleted successfully!');
+	    }
+
+	    function deleteNoteFailed(error) {
+	      $log.error('Failed for deleteNote: ' + error.data);
 	    }
 	  }
 	}
@@ -44687,7 +44736,7 @@
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/components/navbar/navbar.template.html';
-	var html = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n  <div class=\"container\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">Notes App</a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"navbar-collapse\">\n      <div class=\"row text-right\">\n        <div class=\"col-md-4 col-md-offset-3\">\n          <form class=\"navbar-form navbar-left\">\n            <div class=\"form-group\">\n              <input type=\"text\" class=\"form-control\" placeholder=\"Buscar\" ng-model=\"navbarCtrl.query\">\n            </div>\n            <button type=\"submit\" class=\"btn btn-default\" ng-click=\"navbarCtrl.searchNote()\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></button>\n          </form>\n        </div>\n        <div class=\"col-md-3 text-right\">\n          <ul class=\"nav navbar-nav navbar-right\">\n            <li class=\"disabled\"><a>Login</a></li>\n          </ul>\n        </div>\n      </div> \n    </div>\n  </div>\n</nav>\n";
+	var html = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n  <div class=\"container\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"/\">Notes App</a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"navbar-collapse\">\n      <div class=\"row text-right\">\n        <div class=\"col-md-4 col-md-offset-3\">\n            <div id=\"navbar-search\" class=\"input-group\">\n              <input type=\"text\" class=\"form-control\" placeholder=\"Buscar\" ng-model=\"navbarCtrl.query\">\n              <span class=\"input-group-btn\">\n                <button type=\"submit\" class=\"btn btn-default\" ng-click=\"navbarCtrl.searchNote()\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></button>\n              </span>\n            </div>\n        </div>\n        <div class=\"col-md-3 text-right\">\n          <ul class=\"nav navbar-nav navbar-right\">\n            <li class=\"disabled\"><a>Login</a></li>\n          </ul>\n        </div>\n      </div> \n    </div>\n  </div>\n</nav>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
@@ -44760,9 +44809,20 @@
 /* 15 */
 /***/ function(module, exports) {
 
-	function NoteController($log, $stateParams, NotesappService) {
+	function NoteController($log, $state, $stateParams, NotesappService) {
 	  var vm = this;
 	  vm.note = {};
+	  vm.noteStatus = "Ativa";
+
+	  vm.apiStatus = {};
+	  vm.apiStatus['Ativa'] = 'active';
+	  vm.apiStatus['Inativa'] = 'inactive';
+	  vm.apiStatus['Rascunho'] = 'draft';
+
+	  vm.viewStatus = {};
+	  vm.viewStatus['active'] = 'Ativa';
+	  vm.viewStatus['inactive'] = 'Inativa';
+	  vm.viewStatus['draft'] = 'Rascunho';
 
 	  vm.saveNote = saveNote;
 	  vm.excludeNote = excludeNote;
@@ -44780,15 +44840,33 @@
 	        vm.note = note;
 	        vm.note.first_seen = new Date(note.first_seen);
 	        vm.note.first_seen = vm.note.first_seen.toString();
-	      });
+	        vm.noteStatus = vm.viewStatus[vm.note.status];
+	    });
 	  }
 
 	  function saveNote() {
-	    console.log('Saved');
+	    vm.note.status = vm.apiStatus[vm.noteStatus];
+
+	    if(vm.note.id) {
+	      // Update a existing note
+	      NotesappService.updateNote(vm.note)
+	        .then(function() {
+	          $state.go('home');
+	      });
+	    } else {
+	      // Create a new one
+	      NotesappService.createNote(vm.note)
+	        .then(function() {
+	          $state.go('home');
+	      });
+	    }
 	  }
 
 	  function excludeNote() {
-	    console.log('Exlude');
+	    NotesappService.deleteNote(vm.note.id)
+	      .then(function() {
+	        $state.go('home');
+	    });
 	  }
 	}
 
@@ -44828,7 +44906,7 @@
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/home/home.template.html';
-	var html = "<navbar></navbar>\n\n<section ng-init=\"statusFilter = ''; strict = false\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-3\">\n        <div class=\"list-group\">\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = ''; strict = false\">\n            <i class=\"fa fa-files-o\" aria-hidden=\"true\"></i> Todas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'active'; strict = true\">\n            <i class=\"fa fa-bolt\" aria-hidden=\"true\"></i> Ativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'inactive'; strict = true\">\n            <i class=\"fa fa-ban\" aria-hidden=\"true\"></i> Inativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'draft'; strict = true\">\n            <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Rascunhos\n          </a>\n          <a href=\"#\" class=\"list-group-item disabled\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i> Minhas\n          </a>\n        </div>\n        <br>\n        <div class=\"text-center\">\n          <a href=\"#/note/\" class=\"btn btn-lg btn-success\">\n            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i> Nova Nota\n          </a>\n        </div>\n        <br>\n      </div>\n      <div class=\"col-md-9\">\n        <div class=\"row\">\n          <div ng-repeat=\"note in homeCtrl.notes | filter:statusFilter:strict:comparator:status\">          \n            <div class=\"col-sm-4 col-lg-4 col-md-4\">\n              <div class=\"thumbnail\">\n                <div class=\"caption\">\n                  <i class=\"fa {{ note.faClass }} pull-right\" aria-hidden=\"true\"></i>\n                  <h4><a href=\"\" ng-click=\"homeCtrl.goNote(note.id)\">{{ note.title }}</a></h4>\n                  <p>{{ note.body }}</p>\n                </div>\n                <div class=\"text-right\">\n                  <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ note.views }}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
+	var html = "<navbar></navbar>\n\n<section ng-init=\"statusFilter = ''; strict = false\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-3\">\n        <div class=\"list-group\">\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = ''; strict = false\">\n            <i class=\"fa fa-files-o\" aria-hidden=\"true\"></i> Todas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'active'; strict = true\">\n            <i class=\"fa fa-bolt\" aria-hidden=\"true\"></i> Ativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'inactive'; strict = true\">\n            <i class=\"fa fa-ban\" aria-hidden=\"true\"></i> Inativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'draft'; strict = true\">\n            <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Rascunhos\n          </a>\n          <a href=\"#\" class=\"list-group-item disabled\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i> Minhas\n          </a>\n        </div>\n        <br>\n        <div class=\"text-center\">\n          <a href=\"#/note/\" class=\"btn btn-lg btn-success\">\n            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i> Nova Nota\n          </a>\n        </div>\n        <br>\n      </div>\n      <div class=\"col-md-9\">\n        <div class=\"row\">\n          <div ng-repeat=\"note in homeCtrl.notes | filter:statusFilter:strict:comparator:status | limitTo:12\">          \n            <div class=\"col-sm-4 col-lg-4 col-md-4\">\n              <div class=\"thumbnail\">\n                <div class=\"caption\">\n                  <i class=\"fa {{ note.faClass }} pull-right\" aria-hidden=\"true\"></i>\n                  <h4><a href=\"\" ng-click=\"homeCtrl.goNote(note.id)\">{{ note.title | limitTo:50 }}</a></h4>\n                  <p class=\"note-body\">{{ note.body | limitTo:200 }}</p>\n                </div>\n                <div class=\"text-right\">\n                  <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ note.views }}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
@@ -44837,7 +44915,7 @@
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/note/note.template.html';
-	var html = "<navbar></navbar>\n\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <div id=\"note-buttons\" class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ noteCtrl.note.views }}</p>\n          </div>\n        </div>\n        <text-angular ng-model=\"noteCtrl.note.body\"></text-angular>\n        <div id=\"note-buttons\" class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <button type=\"button\" class=\"btn btn-lg btn-danger\" ng-click=\"noteCtrl.excludeNote()\">Excluir</button>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <button type=\"button\" class=\"btn btn-lg btn-success\" ng-click=\"noteCtrl.saveNote()\">Salvar</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
+	var html = "<navbar></navbar>\n\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <label for=\"inputTitle\" class=\"col-sm-1 control-label\">Título</label>\n            <div class=\"col-sm-8\">\n              <input type=\"text\" class=\"form-control\" id=\"inputTitle\" placeholder=\"Título\" ng-model=\"noteCtrl.note.title\">\n            </div>\n            <label class=\"col-sm-1 control-label\">Status</label>\n            <div id=\"status-selector\" class=\"col-sm-2\">\n              <select class=\"form-control\" ng-model=\"noteCtrl.noteStatus\">\n                <option>Ativa</option>\n                <option>Inativa</option>\n                <option>Rascunho</option>\n              </select>\n            </div>\n          </div>\n        </form>\n        <text-angular ng-model=\"noteCtrl.note.body\"></text-angular>\n        <div class=\"row note-footer\" ng-if=\"noteCtrl.note.id\">\n          <div class=\"col-xs-6 text-left\">\n            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ noteCtrl.note.views }}</p>\n          </div>\n        </div>\n        <div class=\"row note-footer\">\n          <div class=\"col-xs-6 text-left\">\n            <div ng-if=\"noteCtrl.note.id\">\n              <button type=\"button\" class=\"btn btn-lg btn-danger\" ng-click=\"noteCtrl.excludeNote()\">Excluir</button>\n            </div>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <button type=\"button\" class=\"btn btn-lg btn-success\" ng-click=\"noteCtrl.saveNote()\">Salvar</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
@@ -44876,7 +44954,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  padding-top: 70px; }\n\n.thumbnail h4 {\n  margin-top: 0; }\n\n.thumbnail .fa.pull-right {\n  padding-top: 2px; }\n\n.list-group i {\n  margin-right: 10px; }\n\n.list-group a:nth-child(1) i {\n  margin-right: 6px; }\n\n.list-group a:nth-child(2) i {\n  margin-right: 15px; }\n\n.ta-toolbar {\n  background-color: #F0F0F0;\n  padding: 10px 10px 5px;\n  margin-left: 0px;\n  border: 1px solid #EEE; }\n  .ta-toolbar .btn-group {\n    margin-bottom: 5px; }\n\n.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {\n  margin-left: 5px; }\n\n.ta-editor, .white-box {\n  border-radius: 0;\n  padding: 10px;\n  background-color: #FFF;\n  border: 1px solid #EEE;\n  height: auto; }\n\n.ta-scroll-window > .ta-bind {\n  height: auto;\n  min-height: 300px;\n  padding: 6px 12px; }\n\n#note-buttons {\n  margin-top: 20px; }\n", ""]);
+	exports.push([module.id, "body {\n  padding-top: 70px; }\n\n.thumbnail {\n  min-height: 240px; }\n  .thumbnail h4 {\n    margin-top: 0; }\n  .thumbnail .fa.pull-right {\n    padding-top: 2px; }\n\n.list-group i {\n  margin-right: 10px; }\n\n.list-group a:nth-child(1) i {\n  margin-right: 6px; }\n\n.list-group a:nth-child(2) i {\n  margin-right: 15px; }\n\n.ta-toolbar {\n  background-color: #F0F0F0;\n  padding: 10px 10px 5px;\n  margin-left: 0px;\n  border: 1px solid #EEE; }\n  .ta-toolbar .btn-group {\n    margin-bottom: 5px; }\n\n.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {\n  margin-left: 5px; }\n\n.ta-editor, .white-box {\n  border-radius: 0;\n  padding: 10px;\n  background-color: #FFF;\n  border: 1px solid #EEE;\n  height: auto; }\n\n.ta-scroll-window > .ta-bind {\n  height: auto;\n  min-height: 300px;\n  padding: 6px 12px; }\n\n#navbar-search {\n  margin-top: 8.5px; }\n\n.note-body {\n  min-height: 120px; }\n\n.note-footer {\n  margin-top: 20px; }\n\n#status-selector {\n  padding-right: 25px; }\n", ""]);
 
 	// exports
 
