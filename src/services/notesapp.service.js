@@ -6,8 +6,8 @@ function NotesappService($http, $log) {
     getNote: getNote
   };
 
-  function getNotes() {
-    return $http.get(url)
+  function getNotes(q) {
+    return $http.get(url + '?q=' + q)
       .then(getNotesComplete)
       .catch(getNotesFailed);
 

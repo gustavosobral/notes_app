@@ -6,7 +6,7 @@ function Routes($stateProvider, $urlRouterProvider) {
 
   $stateProvider
     .state('home', {
-      url: "/",
+      url: "/{q}",
       templateUrl: homeTemplate,
       controller: 'HomeController',
       controllerAs: 'homeCtrl'

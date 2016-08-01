@@ -8,8 +8,15 @@ function NavbarComponent() {
     controllerAs: 'navbarCtrl'
   }
 
-  function NavbarComponentController() {
+  function NavbarComponentController($state) {
     var vm = this;
+    vm.query;
+
+    vm.searchNote = searchNote;
+
+    function searchNote() {
+      $state.go('home', { q: vm.query })
+    }
   }
 }
 

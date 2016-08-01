@@ -1,4 +1,4 @@
-function HomeController($log, $state, NotesappService) {
+function HomeController($log, $state, $stateParams, NotesappService) {
   var vm = this;
   vm.notes = [];
 
@@ -8,11 +8,11 @@ function HomeController($log, $state, NotesappService) {
 
   // Controller initailization
   function initialize() {
-    getNotes();
+    getNotes($stateParams.q);
   }
 
-  function getNotes() {
-    NotesappService.getNotes()
+  function getNotes(q) {
+    NotesappService.getNotes(q)
       .then(function(notes) {
         vm.notes = notes;
 
