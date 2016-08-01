@@ -3,7 +3,7 @@ function NotesappService($http, $log) {
 
   return {
     getNotes: getNotes,
-    getNote, getNote
+    getNote: getNote
   };
 
   function getNotes() {
