@@ -1,6 +1,7 @@
 body { padding-top: 70px; }
 
 .thumbnail {
+  min-height: 240px;
   h4 { margin-top: 0; }
   .fa.pull-right { padding-top: 2px; }
 }
@@ -37,6 +38,7 @@ body { padding-top: 70px; }
   padding: 6px 12px;
 }
 
+.note-body { min-height: 120px; }
 .note-footer { margin-top: 20px; }
 
 #status-selector { padding-right: 25px; }
