@@ -15,7 +15,9 @@
         <text-angular ng-model="noteCtrl.note.body"></text-angular>
         <div id="note-buttons" class="row">
           <div class="col-xs-6 text-left">
-            <button type="button" class="btn btn-lg btn-danger" ng-click="noteCtrl.excludeNote()">Excluir</button>
+            <div ng-if="noteCtrl.note.id">
+              <button type="button" class="btn btn-lg btn-danger" ng-click="noteCtrl.excludeNote()">Excluir</button>
+            </div>
           </div>
           <div class="col-xs-6 text-right">
             <button type="button" class="btn btn-lg btn-success" ng-click="noteCtrl.saveNote()">Salvar</button>

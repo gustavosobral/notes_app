@@ -1,4 +1,4 @@
-function NoteController($log, $stateParams, NotesappService) {
+function NoteController($log, $state, $stateParams, NotesappService) {
   var vm = this;
   vm.note = {};
 
@@ -18,7 +18,7 @@ function NoteController($log, $stateParams, NotesappService) {
         vm.note = note;
         vm.note.first_seen = new Date(note.first_seen);
         vm.note.first_seen = vm.note.first_seen.toString();
-      });
+    });
   }
 
   function saveNote() {
@@ -26,7 +26,10 @@ function NoteController($log, $stateParams, NotesappService) {
   }
 
   function excludeNote() {
-    console.log('Exlude');
+    NotesappService.deleteNote(vm.note.id)
+      .then(function() {
+        $state.go('home');
+    });
   }
 }
 
