@@ -34,11 +34,16 @@ function NoteController($log, $state, $stateParams, NotesappService) {
   }
 
   function saveNote() {
+    vm.note.status = vm.apiStatus[vm.noteStatus];
+
     if(vm.note.id) {
-      console.log('Updated');
+      // Update a existing note
+      NotesappService.updateNote(vm.note)
+        .then(function() {
+          $state.go('home');
+      });
     } else {
-      vm.note.status = vm.apiStatus[vm.noteStatus];
-      console.log(vm.note);
+      // Create a new one
       NotesappService.createNote(vm.note)
         .then(function() {
           $state.go('home');
