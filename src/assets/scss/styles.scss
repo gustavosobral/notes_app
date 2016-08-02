@@ -1,5 +1,9 @@
 body { padding-top: 70px; }
 
+@media (min-width: 768px) {
+  .modal-dialog { width: 700px; }
+}
+
 .thumbnail {
   min-height: 240px;
   h4 { margin-top: 0; }
@@ -43,7 +47,12 @@ body { padding-top: 70px; }
 
 #navbar-search { margin-top: 8.5px; }
 
-.note-title { min-height: 20px; }
+.note-title {
+  a, a:hover {
+    cursor: pointer;
+    text-decoration: none; }
+  h4 { min-height: 20px; }
+}
 .note-body {
   overflow: auto;
   text-overflow: ellipsis;
@@ -53,6 +62,5 @@ body { padding-top: 70px; }
   margin-top: 5px;
   padding: 0 10px;
 }
-.note-footer { margin-top: 20px; }
 
-#status-selector { padding-right: 25px; }
+.note-footer { margin-top: 20px; }

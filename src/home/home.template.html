@@ -33,13 +33,17 @@
         <div class="row">
           <div ng-repeat="note in homeCtrl.notes | filter:statusFilter:strict:comparator:status | limitTo:12">          
             <div class="col-sm-6 col-lg-6 col-md-6">
-              <div class="thumbnail">
-                <div class="caption">
-                  <i class="fa {{ note.faClass }} pull-right" aria-hidden="true"></i>
-                  <h4 class="note-title"><a href="">{{ note.title | limitTo:30 }}</a></h4>
-                  <hr>
+              <div class="thumbnail">                
+                <div class="caption">                  
+                  <div class="note-title">
+                    <a data-toggle="modal" data-target="#myModal" ng-click="homeCtrl.modalNote=note">
+                      <i class="fa {{ note.faClass }} pull-right" aria-hidden="true"></i>
+                      <h4>{{ note.title | limitTo:30 }}</h4>
+                      <hr>
+                    </a>
+                  </div>                  
                   <div class="note-body" ng-bind-html="note.body | limitTo:460"></div>
-                </div>
+                </div>                
                 <div class="note-card-footer row">
                   <div class="col-xs-6 text-left">
                     <a ng-click="homeCtrl.goNote(note.id)" class="btn btn-xs btn-info">Editar</a>
@@ -55,3 +59,20 @@
     </div>
   </div>
 </section>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{ homeCtrl.modalNote.title }}</h4>
+      </div>
+      <div class="modal-body">
+        <div ng-bind-html="homeCtrl.modalNote.body"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 function HomeController($log, $state, $stateParams, NotesappService) {
   var vm = this;
   vm.notes = [];
+  vm.modalNote;
 
   vm.goNote = goNote;
 
