@@ -60,6 +60,18 @@
 	  home, note, uiRouter, textAngular
 	]);
 
+	app.config(function($provide) {
+	  $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions) {
+	    taOptions.toolbar = [
+	      ['h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
+	      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
+	      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+	      ['insertImage','insertLink', 'wordcount', 'charcount']
+	    ];
+	    return taOptions;
+	  }]);
+	})
+
 	app.config(Routes);
 
 
@@ -44599,7 +44611,7 @@
 /* 9 */
 /***/ function(module, exports) {
 
-	function NotesappService($http, $log) {
+	function NotesappService($http, $q, $log) {
 	  var url = 'http://138.68.11.67/notes';
 
 	  return {
@@ -44610,6 +44622,12 @@
 	    deleteNote: deleteNote
 	  };
 
+	  function logError(e, errorMessage) {
+	    if(e.data && e.data.error)
+	        errorMessage = errorMessage + ' "' + e.data.error + '"'
+	    $log.error(errorMessage);
+	  }
+
 	  function getNotes(q) {
 	    return $http.get(url + '?q=' + q)
 	      .then(getNotesComplete)
@@ -44619,8 +44637,9 @@
 	      return response.data;
 	    }
 
-	    function getNotesFailed(error) {
-	      $log.error('Failed for getNotes: ' + error.data);
+	    function getNotesFailed(e) {
+	      logError(e, 'Failed for getNotes!');
+	      return $q.reject(e);
 	    }
 	  }
 
@@ -44633,8 +44652,9 @@
 	      return response.data;
 	    }
 
-	    function getNoteFailed(error) {
-	      $log.error('Failed for getNote: ' + error.data);
+	    function getNoteFailed(e) {
+	      logError(e, 'Failed for getNote!');
+	      return $q.reject(e);
 	    }
 	  }
 
@@ -44649,8 +44669,9 @@
 	      $log.info('Note created successfully!');
 	    }
 
-	    function createNoteFailed(error) {
-	      $log.error('Failed for createNote: ' + error.data);
+	    function createNoteFailed(e) {
+	      logError(e, 'Failed for createNote!');
+	      return $q.reject(e);
 	    }
 	  }
 
@@ -44665,8 +44686,9 @@
 	      $log.info('Note updated successfully!');
 	    }
 
-	    function updateNoteFailed(error) {
-	      $log.error('Failed for updateNote: ' + error.data);
+	    function updateNoteFailed(e) {
+	      logError(e, 'Failed for updateNote!');
+	      return $q.reject(e);
 	    }
 	  }
 
@@ -44679,8 +44701,9 @@
 	      $log.info('Note deleted successfully!');
 	    }
 
-	    function deleteNoteFailed(error) {
-	      $log.error('Failed for deleteNote: ' + error.data);
+	    function deleteNoteFailed(e) {
+	      logError(e, 'Failed for deleteNote!');
+	      return $q.reject(e);
 	    }
 	  }
 	}
@@ -44775,9 +44798,13 @@
 	              break;
 	            case 'draft':
 	              vm.notes[i].faClass = 'fa-pencil';
-	          }          
+	          }
 	        }
-	    });
+	      })
+	      .catch(function(e) {
+	        // TODO: Handle API error (Using alerts)
+	        $state.go('home');
+	      });
 	  }
 
 	  function goNote(id) {
@@ -44837,6 +44864,8 @@
 	  initialize();
 
 	  function initialize() {
+	    jQuery('#note-alert').hide();
+
 	    if($stateParams.id)
 	      getNote($stateParams.id);
 	  }
@@ -44848,32 +44877,56 @@
 	        vm.note.first_seen = new Date(note.first_seen);
 	        vm.note.first_seen = vm.note.first_seen.toString();
 	        vm.noteStatus = vm.viewStatus[vm.note.status];
-	    });
+	      })
+	      .catch(function(e) {
+	        // TODO: Handle API error (Using alerts)
+	        $state.go('home');
+	      });
 	  }
 
 	  function saveNote() {
 	    vm.note.status = vm.apiStatus[vm.noteStatus];
+
+	    if(!vm.note.title || !vm.note.body) {
+	      jQuery('#note-alert').show();
+	      return;
+	    }
 
 	    if(vm.note.id) {
 	      // Update a existing note
 	      NotesappService.updateNote(vm.note)
 	        .then(function() {
 	          $state.go('home');
-	      });
+	        })
+	        .catch(function(e) {
+	          // TODO: Handle API error (Using alerts)
+	          $state.go('home');
+	        });
 	    } else {
 	      // Create a new one
 	      NotesappService.createNote(vm.note)
 	        .then(function() {
 	          $state.go('home');
-	      });
+	        })
+	        .catch(function(e) {
+	          // TODO: Handle API error (Using alerts)
+	          $state.go('home');
+	        });
 	    }
 	  }
 
 	  function excludeNote() {
+	    if(!window.confirm("Tem certeza que deseja excluir essa anotação?"));
+	      return;
+
 	    NotesappService.deleteNote(vm.note.id)
 	      .then(function() {
 	        $state.go('home');
-	    });
+	      })
+	      .catch(function(e) {
+	        // TODO: Handle API error (Using alerts)
+	        $state.go('home');
+	      });;
 	  }
 	}
 
@@ -44922,7 +44975,7 @@
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/note/note.template.html';
-	var html = "<navbar></navbar>\n\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <label for=\"inputTitle\" class=\"col-sm-1 control-label text-left\">Título: </label>\n            <div class=\"col-sm-8\">\n              <input type=\"text\" class=\"form-control\" id=\"inputTitle\" placeholder=\"Título\" ng-model=\"noteCtrl.note.title\">\n            </div>\n            <label class=\"col-sm-1 control-label text-left\">Status: </label>\n            <div id=\"status-selector\" class=\"col-sm-2\">\n              <select class=\"form-control\" ng-model=\"noteCtrl.noteStatus\">\n                <option>Ativa</option>\n                <option>Inativa</option>\n                <option>Rascunho</option>\n              </select>\n            </div>\n          </div>\n        </form>\n        <text-angular ng-model=\"noteCtrl.note.body\"></text-angular>\n        <div class=\"row note-footer\" ng-if=\"noteCtrl.note.id\">\n          <div class=\"col-xs-6 text-left\">\n            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ noteCtrl.note.views }}</p>\n          </div>\n        </div>\n        <div class=\"row note-footer\">\n          <div class=\"col-xs-6 text-left\">\n            <div ng-if=\"noteCtrl.note.id\">\n              <button type=\"button\" class=\"btn btn-md btn-danger\" ng-click=\"noteCtrl.excludeNote()\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i> Excluir</button>\n            </div>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <button type=\"button\" class=\"btn btn-md btn-success\" ng-click=\"noteCtrl.saveNote()\"><i class=\"fa fa-check\" aria-hidden=\"true\"></i> Salvar</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
+	var html = "<navbar></navbar>\n\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <div id=\"note-alert\" class=\"alert alert-warning alert-dismissible\" role=\"alert\">\n          <strong>Atenção!</strong> Verifique se os campos de <strong>Título</strong> e <strong>Corpo</strong> estão devidamente preenchidos para concluir uma anotação válida.\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 col-md-offset-1\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <label for=\"inputTitle\" class=\"col-sm-1 control-label text-left\">Título: </label>\n            <div class=\"col-sm-8\">\n              <input type=\"text\" class=\"form-control\" id=\"inputTitle\" placeholder=\"Título\" ng-model=\"noteCtrl.note.title\">\n            </div>\n            <label class=\"col-sm-1 control-label text-left\">Status: </label>\n            <div id=\"status-selector\" class=\"col-sm-2\">\n              <select class=\"form-control\" ng-model=\"noteCtrl.noteStatus\">\n                <option>Ativa</option>\n                <option>Inativa</option>\n                <option>Rascunho</option>\n              </select>\n            </div>\n          </div>\n        </form>\n\n        <label id=\"label-note-body\" class=\"col-sm-1 control-label\">Corpo: </label>\n        <text-angular ng-model=\"noteCtrl.note.body\"></text-angular>\n        <div class=\"row note-footer\" ng-if=\"noteCtrl.note.id\">\n          <div class=\"col-xs-6 text-left\">\n            <p><b>Primeira visualização:</b> {{ noteCtrl.note.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ noteCtrl.note.views }}</p>\n          </div>\n        </div>\n        <div class=\"row note-footer\">\n          <div class=\"col-xs-6 text-left\">\n            <div ng-if=\"noteCtrl.note.id\">\n              <button type=\"button\" class=\"btn btn-md btn-danger\" ng-click=\"noteCtrl.excludeNote()\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i> Excluir</button>\n            </div>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <a href=\"#/\" class=\"btn btn-md btn-warning\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i> Cancelar</a>\n            <button type=\"button\" class=\"btn btn-md btn-success\" ng-click=\"noteCtrl.saveNote()\"><i class=\"fa fa-check\" aria-hidden=\"true\"></i> Salvar</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
@@ -44961,7 +45014,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  padding-top: 70px; }\n\n@media (min-width: 768px) {\n  .modal-dialog {\n    width: 700px; } }\n\n.thumbnail {\n  min-height: 240px; }\n  .thumbnail h4 {\n    margin-top: 0; }\n  .thumbnail hr {\n    margin: 0 0 10px 0; }\n  .thumbnail .fa.pull-right {\n    margin-left: .4em;\n    padding-top: 2px; }\n\n.list-group i {\n  margin-right: 10px; }\n\n.list-group a:nth-child(1) i {\n  margin-right: 6px; }\n\n.list-group a:nth-child(2) i {\n  margin-right: 15px; }\n\n.ta-toolbar {\n  background-color: #F0F0F0;\n  padding: 10px 10px 5px;\n  margin-left: 0px;\n  border: 1px solid #EEE; }\n  .ta-toolbar .btn-group {\n    margin-bottom: 5px; }\n\n.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {\n  margin-left: 5px; }\n\n.ta-editor, .white-box {\n  border-radius: 0;\n  padding: 10px;\n  background-color: #FFF;\n  border: 1px solid #EEE;\n  height: auto; }\n\n.ta-scroll-window > .ta-bind {\n  height: auto;\n  min-height: 300px;\n  padding: 6px 12px; }\n\n#navbar-search {\n  margin-top: 8.5px; }\n\n.note-title a, .note-title a:hover {\n  cursor: pointer;\n  text-decoration: none; }\n\n.note-title h4 {\n  min-height: 20px; }\n\n.note-body {\n  overflow: auto;\n  text-overflow: ellipsis;\n  min-height: 170px;\n  max-height: 170px; }\n\n.note-card-footer {\n  margin-top: 5px;\n  padding: 0 10px; }\n\n.note-footer {\n  margin-top: 20px; }\n\n.modal-header {\n  padding-bottom: 5px; }\n  .modal-header .modal-fa {\n    padding-right: 5px;\n    border-right: 1px solid; }\n  .modal-header .row {\n    padding: 0 15px; }\n    .modal-header .row .col-xs-10,\n    .modal-header .row .col-xs-2 {\n      padding: 0;\n      padding-top: 10px; }\n", ""]);
+	exports.push([module.id, "body {\n  padding-top: 70px; }\n\n.text-left {\n  text-align: left; }\n\n.form-horizontal .col-sm-8 {\n  margin-bottom: 15px; }\n\n#label-note-body {\n  padding-left: 0; }\n\n@media (min-width: 768px) {\n  .modal-dialog {\n    width: 700px; }\n  .form-horizontal .col-sm-8 {\n    margin-bottom: 0; }\n  #label-note-body {\n    padding: 15px 0 0 15px; } }\n\n.thumbnail {\n  min-height: 240px; }\n  .thumbnail h4 {\n    margin-top: 0; }\n  .thumbnail hr {\n    margin: 0 0 10px 0; }\n  .thumbnail .fa.pull-right {\n    margin-left: .4em;\n    padding-top: 2px; }\n\n.list-group i {\n  margin-right: 10px; }\n\n.list-group a:nth-child(1) i {\n  margin-right: 6px; }\n\n.list-group a:nth-child(2) i {\n  margin-right: 15px; }\n\n.ta-toolbar {\n  background-color: #F0F0F0;\n  padding: 10px 10px 5px;\n  margin-left: 0px;\n  border: 1px solid #EEE; }\n  .ta-toolbar .btn-group {\n    margin-bottom: 5px; }\n\n.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {\n  margin-left: 5px; }\n\n.ta-editor, .white-box {\n  border-radius: 0;\n  padding: 10px;\n  background-color: #FFF;\n  border: 1px solid #EEE;\n  height: auto; }\n\n.ta-scroll-window > .ta-bind {\n  height: auto;\n  min-height: 300px;\n  padding: 6px 12px; }\n\n#navbar-search {\n  margin-top: 8.5px; }\n\n.note-title a, .note-title a:hover {\n  cursor: pointer;\n  text-decoration: none; }\n\n.note-title h4 {\n  min-height: 20px; }\n\n.note-body {\n  overflow: auto;\n  text-overflow: ellipsis;\n  min-height: 170px;\n  max-height: 170px; }\n\n.note-card-footer {\n  margin-top: 5px;\n  padding: 0 10px; }\n\n.note-footer {\n  margin-top: 20px; }\n\n.modal-header {\n  padding-bottom: 5px; }\n  .modal-header .modal-fa {\n    padding-right: 5px;\n    border-right: 1px solid; }\n  .modal-header .row {\n    padding: 0 15px; }\n    .modal-header .row .col-xs-10,\n    .modal-header .row .col-xs-2 {\n      padding: 0;\n      padding-top: 10px; }\n\n.modal-body {\n  min-height: 250px; }\n", ""]);
 
 	// exports
 
