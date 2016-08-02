@@ -4,6 +4,7 @@ function HomeController($log, $state, $stateParams, NotesappService) {
   vm.modalNote;
 
   vm.goNote = goNote;
+  vm.openModal = openModal;
 
   initialize();
 
@@ -35,6 +36,11 @@ function HomeController($log, $state, $stateParams, NotesappService) {
 
   function goNote(id) {
     $state.go('note', { id: id });
+  }
+
+  function openModal(note) {
+    vm.modalNote = note;
+    NotesappService.getNote(note.id);
   }
 }
 

@@ -36,7 +36,7 @@
               <div class="thumbnail">                
                 <div class="caption">                  
                   <div class="note-title">
-                    <a data-toggle="modal" data-target="#myModal" ng-click="homeCtrl.modalNote=note">
+                    <a data-toggle="modal" data-target="#myModal" ng-click="homeCtrl.openModal(note)">
                       <i class="fa {{ note.faClass }} pull-right" aria-hidden="true"></i>
                       <h4>{{ note.title | limitTo:30 }}</h4>
                       <hr>
@@ -64,14 +64,28 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{ homeCtrl.modalNote.title }}</h4>
+        <div class="row">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h3 class="modal-title" id="myModalLabel"><b>{{ homeCtrl.modalNote.title }}</b></h3>
+        </div>
+        <div class="row">
+          <div class="col-xs-10 text-left">
+            <p><b>Primeira visualização:</b> {{ homeCtrl.modalNote.first_seen }}</p>
+          </div>
+          <div class="col-xs-2 text-right">
+            <p>
+              <i class="fa {{ homeCtrl.modalNote.faClass }} modal-fa" aria-hidden="true"></i>
+              <i class="fa fa-eye" aria-hidden="true"></i>
+              {{ homeCtrl.modalNote.views }}
+            </p>
+          </div>
+        </div>
       </div>
       <div class="modal-body">
         <div ng-bind-html="homeCtrl.modalNote.body"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Fechar</button>
       </div>
     </div>
   </div>

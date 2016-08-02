@@ -6,11 +6,11 @@
       <div class="col-md-10 col-md-offset-1">
         <form class="form-horizontal">
           <div class="form-group">
-            <label for="inputTitle" class="col-sm-1 control-label">Título</label>
+            <label for="inputTitle" class="col-sm-1 control-label text-left">Título: </label>
             <div class="col-sm-8">
               <input type="text" class="form-control" id="inputTitle" placeholder="Título" ng-model="noteCtrl.note.title">
             </div>
-            <label class="col-sm-1 control-label">Status</label>
+            <label class="col-sm-1 control-label text-left">Status: </label>
             <div id="status-selector" class="col-sm-2">
               <select class="form-control" ng-model="noteCtrl.noteStatus">
                 <option>Ativa</option>
@@ -32,11 +32,11 @@
         <div class="row note-footer">
           <div class="col-xs-6 text-left">
             <div ng-if="noteCtrl.note.id">
-              <button type="button" class="btn btn-lg btn-danger" ng-click="noteCtrl.excludeNote()">Excluir</button>
+              <button type="button" class="btn btn-md btn-danger" ng-click="noteCtrl.excludeNote()"><i class="fa fa-trash-o" aria-hidden="true"></i> Excluir</button>
             </div>
           </div>
           <div class="col-xs-6 text-right">
-            <button type="button" class="btn btn-lg btn-success" ng-click="noteCtrl.saveNote()">Salvar</button>
+            <button type="button" class="btn btn-md btn-success" ng-click="noteCtrl.saveNote()"><i class="fa fa-check" aria-hidden="true"></i> Salvar</button>
           </div>
         </div>
       </div>

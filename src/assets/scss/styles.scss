@@ -64,3 +64,17 @@ body { padding-top: 70px; }
 }
 
 .note-footer { margin-top: 20px; }
+
+.modal-header {
+  padding-bottom: 5px;
+  .modal-fa {
+    padding-right: 5px;
+    border-right: 1px solid; }
+  .row { 
+    padding: 0 15px;
+  .col-xs-10,
+  .col-xs-2 {
+    padding: 0;
+    padding-top: 10px; }
+  }
+}
