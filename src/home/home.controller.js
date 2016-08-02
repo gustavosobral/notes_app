@@ -29,9 +29,13 @@ function HomeController($log, $state, $stateParams, NotesappService) {
               break;
             case 'draft':
               vm.notes[i].faClass = 'fa-pencil';
-          }          
+          }
         }
-    });
+      })
+      .catch(function(e) {
+        // TODO: Handle API error (Using alerts)
+        $state.go('home');
+      });
   }
 
   function goNote(id) {

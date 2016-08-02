@@ -30,7 +30,11 @@ function NoteController($log, $state, $stateParams, NotesappService) {
         vm.note.first_seen = new Date(note.first_seen);
         vm.note.first_seen = vm.note.first_seen.toString();
         vm.noteStatus = vm.viewStatus[vm.note.status];
-    });
+      })
+      .catch(function(e) {
+        // TODO: Handle API error (Using alerts)
+        $state.go('home');
+      });
   }
 
   function saveNote() {
@@ -41,13 +45,21 @@ function NoteController($log, $state, $stateParams, NotesappService) {
       NotesappService.updateNote(vm.note)
         .then(function() {
           $state.go('home');
-      });
+        })
+        .catch(function(e) {
+          // TODO: Handle API error (Using alerts)
+          $state.go('home');
+        });
     } else {
       // Create a new one
       NotesappService.createNote(vm.note)
         .then(function() {
           $state.go('home');
-      });
+        })
+        .catch(function(e) {
+          // TODO: Handle API error (Using alerts)
+          $state.go('home');
+        });
     }
   }
 
@@ -55,7 +67,11 @@ function NoteController($log, $state, $stateParams, NotesappService) {
     NotesappService.deleteNote(vm.note.id)
       .then(function() {
         $state.go('home');
-    });
+      })
+      .catch(function(e) {
+        // TODO: Handle API error (Using alerts)
+        $state.go('home');
+      });;
   }
 }
 

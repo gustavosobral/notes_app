@@ -1,4 +1,4 @@
-function NotesappService($http, $log) {
+function NotesappService($http, $q, $log) {
   var url = 'http://138.68.11.67/notes';
 
   return {
@@ -9,6 +9,12 @@ function NotesappService($http, $log) {
     deleteNote: deleteNote
   };
 
+  function logError(e, errorMessage) {
+    if(e.data && e.data.error)
+        errorMessage = errorMessage + ' "' + e.data.error + '"'
+    $log.error(errorMessage);
+  }
+
   function getNotes(q) {
     return $http.get(url + '?q=' + q)
       .then(getNotesComplete)
@@ -18,8 +24,9 @@ function NotesappService($http, $log) {
       return response.data;
     }
 
-    function getNotesFailed(error) {
-      $log.error('Failed for getNotes: ' + error.data);
+    function getNotesFailed(e) {
+      logError(e, 'Failed for getNotes!');
+      return $q.reject(e);
     }
   }
 
@@ -32,8 +39,9 @@ function NotesappService($http, $log) {
       return response.data;
     }
 
-    function getNoteFailed(error) {
-      $log.error('Failed for getNote: ' + error.data);
+    function getNoteFailed(e) {
+      logError(e, 'Failed for getNote!');
+      return $q.reject(e);
     }
   }
 
@@ -48,8 +56,9 @@ function NotesappService($http, $log) {
       $log.info('Note created successfully!');
     }
 
-    function createNoteFailed(error) {
-      $log.error('Failed for createNote: ' + error.data);
+    function createNoteFailed(e) {
+      logError(e, 'Failed for createNote!');
+      return $q.reject(e);
     }
   }
 
@@ -64,8 +73,9 @@ function NotesappService($http, $log) {
       $log.info('Note updated successfully!');
     }
 
-    function updateNoteFailed(error) {
-      $log.error('Failed for updateNote: ' + error.data);
+    function updateNoteFailed(e) {
+      logError(e, 'Failed for updateNote!');
+      return $q.reject(e);
     }
   }
 
@@ -78,8 +88,9 @@ function NotesappService($http, $log) {
       $log.info('Note deleted successfully!');
     }
 
-    function deleteNoteFailed(error) {
-      $log.error('Failed for deleteNote: ' + error.data);
+    function deleteNoteFailed(e) {
+      logError(e, 'Failed for deleteNote!');
+      return $q.reject(e);
     }
   }
 }
