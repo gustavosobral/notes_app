@@ -14,4 +14,16 @@ var app = angular.module('notesApp', [
   home, note, uiRouter, textAngular
 ]);
 
+app.config(function($provide) {
+  $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions) {
+    taOptions.toolbar = [
+      ['h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
+      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
+      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+      ['insertImage','insertLink', 'wordcount', 'charcount']
+    ];
+    return taOptions;
+  }]);
+})
+
 app.config(Routes);
