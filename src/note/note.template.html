@@ -4,6 +4,18 @@
   <div class="container">
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
+        <div id="note-alert" class="alert alert-warning alert-dismissible" role="alert">
+          <strong>Atenção!</strong> Verifique se os campos de <strong>Título</strong> e <strong>Corpo</strong> estão devidamente preenchidos para concluir uma anotação válida.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
         <form class="form-horizontal">
           <div class="form-group">
             <label for="inputTitle" class="col-sm-1 control-label text-left">Título: </label>
@@ -20,6 +32,8 @@
             </div>
           </div>
         </form>
+
+        <label id="label-note-body" class="col-sm-1 control-label">Corpo: </label>
         <text-angular ng-model="noteCtrl.note.body"></text-angular>
         <div class="row note-footer" ng-if="noteCtrl.note.id">
           <div class="col-xs-6 text-left">

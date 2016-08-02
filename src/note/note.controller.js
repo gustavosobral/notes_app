@@ -19,6 +19,8 @@ function NoteController($log, $state, $stateParams, NotesappService) {
   initialize();
 
   function initialize() {
+    jQuery('#note-alert').hide();
+
     if($stateParams.id)
       getNote($stateParams.id);
   }
@@ -39,6 +41,11 @@ function NoteController($log, $state, $stateParams, NotesappService) {
 
   function saveNote() {
     vm.note.status = vm.apiStatus[vm.noteStatus];
+
+    if(!vm.note.title || !vm.note.body) {
+      jQuery('#note-alert').show();
+      return;
+    }
 
     if(vm.note.id) {
       // Update a existing note
@@ -64,6 +71,9 @@ function NoteController($log, $state, $stateParams, NotesappService) {
   }
 
   function excludeNote() {
+    if(!window.confirm("Tem certeza que deseja excluir essa anotação?"));
+      return;
+
     NotesappService.deleteNote(vm.note.id)
       .then(function() {
         $state.go('home');

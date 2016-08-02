@@ -1,7 +1,17 @@
 body { padding-top: 70px; }
 
+.text-left { text-align: left; }
+.form-horizontal {
+  .col-sm-8 { margin-bottom: 15px; }
+}
+#label-note-body { padding-left: 0; }
+
 @media (min-width: 768px) {
   .modal-dialog { width: 700px; }
+  .form-horizontal {
+    .col-sm-8 { margin-bottom: 0; }
+  }  
+  #label-note-body { padding: 15px 0 0 15px; }
 }
 
 .thumbnail {
