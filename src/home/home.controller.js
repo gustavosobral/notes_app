@@ -24,6 +24,8 @@ function HomeController($log, $state, $stateParams, NotesappService) {
 
         // Parse note status into Font Awesome icons
         for (var i = vm.notes.length - 1; i >= 0; i--) {
+          vm.notes[i].first_seen = new Date(vm.notes[i].first_seen);
+          vm.notes[i].first_seen = vm.notes[i].first_seen.toString();
           switch(vm.notes[i].status) {
             case 'active':
               vm.notes[i].faClass = 'fa-bolt';
