@@ -2,7 +2,7 @@ function HomeController($log, $state, $stateParams, NotesappService) {
   var vm = this;
   vm.notes = [];
   vm.pages = [];
-  vm.modalNote;  
+  vm.modalNote;
 
   vm.goNote = goNote;
   vm.getNotes = getNotes;
@@ -38,6 +38,7 @@ function HomeController($log, $state, $stateParams, NotesappService) {
 
         // Calculate the number of pages to paginate based on response headers
         qtPages = Math.ceil(response.headers('Total')/response.headers('Per-Page'));
+        vm.pages = [];
         for(var i = 1; i <= qtPages; i++) {
           vm.pages.push(i);
         }
