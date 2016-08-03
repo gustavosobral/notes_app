@@ -44776,7 +44776,7 @@
 	  var vm = this;
 	  vm.notes = [];
 	  vm.pages = [];
-	  vm.modalNote;  
+	  vm.modalNote;
 
 	  vm.goNote = goNote;
 	  vm.getNotes = getNotes;
@@ -44798,6 +44798,8 @@
 
 	        // Parse note status into Font Awesome icons
 	        for (var i = vm.notes.length - 1; i >= 0; i--) {
+	          vm.notes[i].first_seen = new Date(vm.notes[i].first_seen);
+	          vm.notes[i].first_seen = vm.notes[i].first_seen.toString();
 	          switch(vm.notes[i].status) {
 	            case 'active':
 	              vm.notes[i].faClass = 'fa-bolt';
@@ -44812,6 +44814,7 @@
 
 	        // Calculate the number of pages to paginate based on response headers
 	        qtPages = Math.ceil(response.headers('Total')/response.headers('Per-Page'));
+	        vm.pages = [];
 	        for(var i = 1; i <= qtPages; i++) {
 	          vm.pages.push(i);
 	        }
