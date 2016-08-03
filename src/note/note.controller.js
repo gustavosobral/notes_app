@@ -71,7 +71,7 @@ function NoteController($log, $state, $stateParams, NotesappService) {
   }
 
   function excludeNote() {
-    if(!window.confirm("Tem certeza que deseja excluir essa anotação?"));
+    if(!window.confirm("Tem certeza que deseja excluir essa anotação?"))
       return;
 
     NotesappService.deleteNote(vm.note.id)

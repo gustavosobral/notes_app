@@ -32,7 +32,6 @@
             </div>
           </div>
         </form>
-
         <label id="label-note-body" class="col-sm-1 control-label">Corpo: </label>
         <text-angular ng-model="noteCtrl.note.body"></text-angular>
         <div class="row note-footer" ng-if="noteCtrl.note.id">
@@ -43,13 +42,13 @@
             <p><i class="fa fa-eye" aria-hidden="true"></i> {{ noteCtrl.note.views }}</p>
           </div>
         </div>
-        <div class="row note-footer">
-          <div class="col-xs-6 text-left">
+        <div class="row note-ta-footer">
+          <div class="col-xs-3 text-left">
             <div ng-if="noteCtrl.note.id">
               <button type="button" class="btn btn-md btn-danger" ng-click="noteCtrl.excludeNote()"><i class="fa fa-trash-o" aria-hidden="true"></i> Excluir</button>
             </div>
           </div>
-          <div class="col-xs-6 text-right">
+          <div class="col-xs-9 text-right">
             <a href="#/" class="btn btn-md btn-warning"><i class="fa fa-times" aria-hidden="true"></i> Cancelar</a>
             <button type="button" class="btn btn-md btn-success" ng-click="noteCtrl.saveNote()"><i class="fa fa-check" aria-hidden="true"></i> Salvar</button>
           </div>

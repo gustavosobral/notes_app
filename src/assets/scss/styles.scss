@@ -1,18 +1,44 @@
+/* General stuff */
+
 body { padding-top: 70px; }
 
-.text-left { text-align: left; }
-.form-horizontal {
-  .col-sm-8 { margin-bottom: 15px; }
-}
-#label-note-body { padding-left: 0; }
+#navbar-search { margin-top: 8.5px; } 
+
+.form-horizontal .col-sm-8 { margin-bottom: 15px; }
 
 @media (min-width: 768px) {
-  .modal-dialog { width: 700px; }
-  .form-horizontal {
-    .col-sm-8 { margin-bottom: 0; }
-  }  
-  #label-note-body { padding: 15px 0 0 15px; }
+  .form-horizontal .col-sm-8 { margin-bottom: 0; }
 }
+
+// Filter menu
+.list-group {
+  i { margin-right: 10px; }
+  a:nth-child(1) i { margin-right: 6px; }
+  a:nth-child(2) i { margin-right: 15px; }
+}
+
+// Paginator
+.pagination {
+  margin-top: 0;
+  display: inline-flex;
+  &>div>li>a {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #337ab7;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd; }
+  &>div>li>a:hover {
+  z-index: 2;
+  color: #23527c;
+  background-color: #eee;
+  border-color: #ddd; }
+}
+
+/* Note */
 
 .thumbnail {
   min-height: 240px;
@@ -23,10 +49,57 @@ body { padding-top: 70px; }
     padding-top: 2px; }
 }
 
-.list-group {
-  i { margin-right: 10px; }
-  a:nth-child(1) i { margin-right: 6px; }
-  a:nth-child(2) i { margin-right: 15px; }
+.note-title {
+  a, a:hover {
+    cursor: pointer;
+    text-decoration: none; }
+  h4 { min-height: 20px; }
+}
+.note-body {
+  overflow: auto;
+  text-overflow: ellipsis;
+  min-height: 170px;
+  max-height: 170px;
+  img {
+    width: 100%;
+    height: 100%; }
+}
+.note-footer {
+  margin-top: 5px;
+  padding: 0 10px; }
+
+/* Modal */
+
+.modal-header {
+  padding-bottom: 5px;
+  .modal-fa {
+    padding-right: 5px;
+    border-right: 1px solid; }
+  .row { 
+    padding: 0 15px;
+  .col-xs-10,
+  .col-xs-2 {
+    padding: 0;
+    padding-top: 10px; }
+  }
+}
+.modal-body {
+  min-height: 250px;
+  img {
+    width: 100%;
+    height: 100%; }
+}
+
+@media (min-width: 768px) {
+  .modal-dialog { width: 700px; }
+}
+
+/* Note editor */
+
+#label-note-body { padding-left: 0; }
+
+@media (min-width: 768px) {
+  #label-note-body { padding: 15px 0 0 15px; }
 }
 
 .ta-toolbar {
@@ -58,47 +131,4 @@ body { padding-top: 70px; }
   padding: 6px 12px;
 }
 
-#navbar-search { margin-top: 8.5px; }
-
-.note-title {
-  a, a:hover {
-    cursor: pointer;
-    text-decoration: none; }
-  h4 { min-height: 20px; }
-}
-.note-body {
-  overflow: auto;
-  text-overflow: ellipsis;
-  min-height: 170px;
-  max-height: 170px;
-  img {
-    width: 100%;
-    height: 100%; }
-}
-.note-card-footer {
-  margin-top: 5px;
-  padding: 0 10px;
-}
-
-.note-footer { margin-top: 20px; }
-
-.modal-header {
-  padding-bottom: 5px;
-  .modal-fa {
-    padding-right: 5px;
-    border-right: 1px solid; }
-  .row { 
-    padding: 0 15px;
-  .col-xs-10,
-  .col-xs-2 {
-    padding: 0;
-    padding-top: 10px; }
-  }
-}
-
-.modal-body { 
-  min-height: 250px;
-  img {
-    width: 100%;
-    height: 100%; }
-}
+.note-ta-footer { margin-top: 20px; }
