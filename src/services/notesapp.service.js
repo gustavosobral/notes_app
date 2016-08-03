@@ -15,13 +15,18 @@ function NotesappService($http, $q, $log) {
     $log.error(errorMessage);
   }
 
-  function getNotes(q) {
-    return $http.get(url + '?q=' + q)
+  function getNotes(q, page) {
+    if(q) {
+      getUrl = url + '?q=' + q;
+    } else {
+      getUrl = url + '?page=' + page;
+    }
+    return $http.get(getUrl)
       .then(getNotesComplete)
       .catch(getNotesFailed);
 
     function getNotesComplete(response) {
-      return response.data;
+      return response;
     }
 
     function getNotesFailed(e) {

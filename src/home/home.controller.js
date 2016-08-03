@@ -1,26 +1,30 @@
 function HomeController($log, $state, $stateParams, NotesappService) {
   var vm = this;
   vm.notes = [];
-  vm.modalNote;
+  vm.pages = [];
+  vm.modalNote;  
 
   vm.goNote = goNote;
+  vm.getNotes = getNotes;
+  vm.goFirstPage = goFirstPage;
+  vm.goLastPage = goLastPage;
   vm.openModal = openModal;
 
   initialize();
 
   // Controller initailization
   function initialize() {
-    getNotes($stateParams.q);
+    getNotes($stateParams.q, 1);
   }
 
-  function getNotes(q) {
-    NotesappService.getNotes(q)
-      .then(function(notes) {
-        vm.notes = notes;
+  function getNotes(q, page) {
+    NotesappService.getNotes(q, page)
+      .then(function(response) {
+        vm.notes = response.data;
 
         // Parse note status into Font Awesome icons
-        for (var i = notes.length - 1; i >= 0; i--) {
-          switch(notes[i].status) {
+        for (var i = vm.notes.length - 1; i >= 0; i--) {
+          switch(vm.notes[i].status) {
             case 'active':
               vm.notes[i].faClass = 'fa-bolt';
               break;
@@ -31,6 +35,12 @@ function HomeController($log, $state, $stateParams, NotesappService) {
               vm.notes[i].faClass = 'fa-pencil';
           }
         }
+
+        // Calculate the number of pages to paginate based on response headers
+        qtPages = Math.ceil(response.headers('Total')/response.headers('Per-Page'));
+        for(var i = 1; i <= qtPages; i++) {
+          vm.pages.push(i);
+        }
       })
       .catch(function(e) {
         // TODO: Handle API error (Using alerts)
@@ -40,6 +50,14 @@ function HomeController($log, $state, $stateParams, NotesappService) {
 
   function goNote(id) {
     $state.go('note', { id: id });
+  }
+
+  function goFirstPage() {
+    getNotes('', 1);
+  }
+
+  function goLastPage() {
+    getNotes('', vm.pages[vm.pages.length - 1]);
   }
 
   function openModal(note) {

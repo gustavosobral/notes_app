@@ -31,7 +31,26 @@
       </div>
       <div class="col-md-9">
         <div class="row">
-          <div ng-repeat="note in homeCtrl.notes | filter:statusFilter:strict:comparator:status">          
+          <div class="text-center" ng-if="homeCtrl.pages.length > 1">
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <li>
+                  <a href="#" aria-label="Previous" ng-click="homeCtrl.goFirstPage()">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <div ng-repeat="page in homeCtrl.pages">
+                  <li><a href="#" ng-click="homeCtrl.getNotes('', page)">{{ page }}</a></li>
+                </div>
+                <li>
+                  <a href="#" aria-label="Next" ng-click="homeCtrl.goLastPage()">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div ng-repeat="note in homeCtrl.notes | filter:statusFilter:strict:comparator:status">
             <div class="col-sm-6 col-lg-6 col-md-6">
               <div class="thumbnail">
                 <div class="caption">
