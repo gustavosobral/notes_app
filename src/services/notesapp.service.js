@@ -1,5 +1,5 @@
 function NotesappService($http, $q, $log) {
-  var url = 'http://138.68.11.67/notes';
+  var url = 'http://138.68.11.67/api/v1/notes';
 
   return {
     getNotes: getNotes,
