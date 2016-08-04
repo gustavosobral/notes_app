@@ -3,11 +3,11 @@ function NoteController($log, $state, $stateParams, NotesappService) {
   vm.note = {};
   vm.noteStatus = "Ativa";
 
+  // Hashs for view-api 'status' conversion
   vm.apiStatus = {};
   vm.apiStatus['Ativa'] = 'active';
   vm.apiStatus['Inativa'] = 'inactive';
   vm.apiStatus['Rascunho'] = 'draft';
-
   vm.viewStatus = {};
   vm.viewStatus['active'] = 'Ativa';
   vm.viewStatus['inactive'] = 'Inativa';
@@ -18,9 +18,11 @@ function NoteController($log, $state, $stateParams, NotesappService) {
 
   initialize();
 
+  // Controller initailization
   function initialize() {
     jQuery('#note-alert').hide();
 
+    // Go try to get a note if there is a passed 'id' param
     if($stateParams.id)
       getNote($stateParams.id);
   }
@@ -34,7 +36,6 @@ function NoteController($log, $state, $stateParams, NotesappService) {
         vm.noteStatus = vm.viewStatus[vm.note.status];
       })
       .catch(function(e) {
-        // TODO: Handle API error (Using alerts)
         $state.go('home');
       });
   }
@@ -42,11 +43,13 @@ function NoteController($log, $state, $stateParams, NotesappService) {
   function saveNote() {
     vm.note.status = vm.apiStatus[vm.noteStatus];
 
+    // Show warning alert on user invalid input
     if(!vm.note.title || !vm.note.body) {
       jQuery('#note-alert').show();
       return;
     }
 
+    // If a note have id
     if(vm.note.id) {
       // Update a existing note
       NotesappService.updateNote(vm.note)
@@ -54,7 +57,6 @@ function NoteController($log, $state, $stateParams, NotesappService) {
           $state.go('home');
         })
         .catch(function(e) {
-          // TODO: Handle API error (Using alerts)
           $state.go('home');
         });
     } else {
@@ -64,13 +66,13 @@ function NoteController($log, $state, $stateParams, NotesappService) {
           $state.go('home');
         })
         .catch(function(e) {
-          // TODO: Handle API error (Using alerts)
           $state.go('home');
         });
     }
   }
 
   function excludeNote() {
+    // User exclude intention confirmation
     if(!window.confirm("Tem certeza que deseja excluir essa anotação?"))
       return;
 
@@ -79,7 +81,6 @@ function NoteController($log, $state, $stateParams, NotesappService) {
         $state.go('home');
       })
       .catch(function(e) {
-        // TODO: Handle API error (Using alerts)
         $state.go('home');
       });;
   }

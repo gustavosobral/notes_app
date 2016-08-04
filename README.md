@@ -1,4 +1,5 @@
 # Notes App
+An collaborative application to store public notes from users.
 
 ## Installation
 ```bash
@@ -8,7 +9,7 @@ $ npm install
 ```
 ## Development
 
-Run `$ npm run dev` to starts the webpack-dev-server. Then, access him on: http://localhost:8080/
+Run `$ npm run dev` to starts the webpack-dev-server. Then, access him on: `http://localhost:8080/`
 
 ## Production
 

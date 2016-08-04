@@ -14,6 +14,7 @@ function HomeController($log, $state, $stateParams, NotesappService) {
 
   // Controller initailization
   function initialize() {
+    // Get the Notes page 1 on startup
     getNotes($stateParams.q, 1);
   }
 
@@ -22,10 +23,12 @@ function HomeController($log, $state, $stateParams, NotesappService) {
       .then(function(response) {
         vm.notes = response.data;
 
-        // Parse note status into Font Awesome icons
         for (var i = vm.notes.length - 1; i >= 0; i--) {
+          // Format 'first_seen' date
           vm.notes[i].first_seen = new Date(vm.notes[i].first_seen);
           vm.notes[i].first_seen = vm.notes[i].first_seen.toString();
+
+          // Parse note 'status' into Font Awesome class icons
           switch(vm.notes[i].status) {
             case 'active':
               vm.notes[i].faClass = 'fa-bolt';
@@ -38,7 +41,7 @@ function HomeController($log, $state, $stateParams, NotesappService) {
           }
         }
 
-        // Calculate the number of pages to paginate based on response headers
+        // Calculate the number of pages to paginate, based on response headers
         qtPages = Math.ceil(response.headers('Total')/response.headers('Per-Page'));
         vm.pages = [];
         for(var i = 1; i <= qtPages; i++) {
@@ -46,7 +49,6 @@ function HomeController($log, $state, $stateParams, NotesappService) {
         }
       })
       .catch(function(e) {
-        // TODO: Handle API error (Using alerts)
         $state.go('home');
       });
   }
@@ -55,16 +57,19 @@ function HomeController($log, $state, $stateParams, NotesappService) {
     $state.go('note', { id: id });
   }
 
+  // Go to first paginated page
   function goFirstPage() {
     getNotes('', 1);
   }
 
+  // Go to last paginated page
   function goLastPage() {
     getNotes('', vm.pages[vm.pages.length - 1]);
   }
 
   function openModal(note) {
     vm.modalNote = note;
+    // Make a GET to increase Note views counter
     NotesappService.getNote(note.id);
   }
 }

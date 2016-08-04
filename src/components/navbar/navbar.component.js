@@ -14,8 +14,9 @@ function NavbarComponent() {
 
     vm.searchNote = searchNote;
 
+    // Pass a user full text query through URL
     function searchNote() {
-      $state.go('home', { q: vm.query })
+      $state.go('home', { q: vm.query });
     }
   }
 }
