@@ -48,10 +48,10 @@
 	var uiRouter        = __webpack_require__(3);
 	var textAngular     = __webpack_require__(4);
 
-	var home    = __webpack_require__(7);
-	var note    = __webpack_require__(14);
+	var home  = __webpack_require__(7);
+	var note  = __webpack_require__(14);
 
-	var Routes   = __webpack_require__(16);
+	var Routes = __webpack_require__(16);
 
 	__webpack_require__(19);
 	__webpack_require__(24);
@@ -62,6 +62,7 @@
 
 	app.config(function($provide) {
 	  $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions) {
+	    // Customize the textAngular toolbar
 	    taOptions.toolbar = [
 	      ['h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
 	      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
@@ -44750,8 +44751,9 @@
 
 	    vm.searchNote = searchNote;
 
+	    // Pass a user full text query through URL
 	    function searchNote() {
-	      $state.go('home', { q: vm.query })
+	      $state.go('home', { q: vm.query });
 	    }
 	  }
 	}
@@ -44788,6 +44790,7 @@
 
 	  // Controller initailization
 	  function initialize() {
+	    // Get the Notes page 1 on startup
 	    getNotes($stateParams.q, 1);
 	  }
 
@@ -44796,10 +44799,12 @@
 	      .then(function(response) {
 	        vm.notes = response.data;
 
-	        // Parse note status into Font Awesome icons
 	        for (var i = vm.notes.length - 1; i >= 0; i--) {
+	          // Format 'first_seen' date
 	          vm.notes[i].first_seen = new Date(vm.notes[i].first_seen);
 	          vm.notes[i].first_seen = vm.notes[i].first_seen.toString();
+
+	          // Parse note 'status' into Font Awesome class icons
 	          switch(vm.notes[i].status) {
 	            case 'active':
 	              vm.notes[i].faClass = 'fa-bolt';
@@ -44812,7 +44817,7 @@
 	          }
 	        }
 
-	        // Calculate the number of pages to paginate based on response headers
+	        // Calculate the number of pages to paginate, based on response headers
 	        qtPages = Math.ceil(response.headers('Total')/response.headers('Per-Page'));
 	        vm.pages = [];
 	        for(var i = 1; i <= qtPages; i++) {
@@ -44820,7 +44825,6 @@
 	        }
 	      })
 	      .catch(function(e) {
-	        // TODO: Handle API error (Using alerts)
 	        $state.go('home');
 	      });
 	  }
@@ -44829,16 +44833,19 @@
 	    $state.go('note', { id: id });
 	  }
 
+	  // Go to first paginated page
 	  function goFirstPage() {
 	    getNotes('', 1);
 	  }
 
+	  // Go to last paginated page
 	  function goLastPage() {
 	    getNotes('', vm.pages[vm.pages.length - 1]);
 	  }
 
 	  function openModal(note) {
 	    vm.modalNote = note;
+	    // Make a GET to increase Note views counter
 	    NotesappService.getNote(note.id);
 	  }
 	}
@@ -44874,11 +44881,11 @@
 	  vm.note = {};
 	  vm.noteStatus = "Ativa";
 
+	  // Hashs for view-api 'status' conversion
 	  vm.apiStatus = {};
 	  vm.apiStatus['Ativa'] = 'active';
 	  vm.apiStatus['Inativa'] = 'inactive';
 	  vm.apiStatus['Rascunho'] = 'draft';
-
 	  vm.viewStatus = {};
 	  vm.viewStatus['active'] = 'Ativa';
 	  vm.viewStatus['inactive'] = 'Inativa';
@@ -44889,9 +44896,11 @@
 
 	  initialize();
 
+	  // Controller initailization
 	  function initialize() {
 	    jQuery('#note-alert').hide();
 
+	    // Go try to get a note if there is a passed 'id' param
 	    if($stateParams.id)
 	      getNote($stateParams.id);
 	  }
@@ -44905,7 +44914,6 @@
 	        vm.noteStatus = vm.viewStatus[vm.note.status];
 	      })
 	      .catch(function(e) {
-	        // TODO: Handle API error (Using alerts)
 	        $state.go('home');
 	      });
 	  }
@@ -44913,11 +44921,13 @@
 	  function saveNote() {
 	    vm.note.status = vm.apiStatus[vm.noteStatus];
 
+	    // Show warning alert on user invalid input
 	    if(!vm.note.title || !vm.note.body) {
 	      jQuery('#note-alert').show();
 	      return;
 	    }
 
+	    // If a note have id
 	    if(vm.note.id) {
 	      // Update a existing note
 	      NotesappService.updateNote(vm.note)
@@ -44925,7 +44935,6 @@
 	          $state.go('home');
 	        })
 	        .catch(function(e) {
-	          // TODO: Handle API error (Using alerts)
 	          $state.go('home');
 	        });
 	    } else {
@@ -44935,13 +44944,13 @@
 	          $state.go('home');
 	        })
 	        .catch(function(e) {
-	          // TODO: Handle API error (Using alerts)
 	          $state.go('home');
 	        });
 	    }
 	  }
 
 	  function excludeNote() {
+	    // User exclude intention confirmation
 	    if(!window.confirm("Tem certeza que deseja excluir essa anotação?"))
 	      return;
 
@@ -44950,7 +44959,6 @@
 	        $state.go('home');
 	      })
 	      .catch(function(e) {
-	        // TODO: Handle API error (Using alerts)
 	        $state.go('home');
 	      });;
 	  }
@@ -44969,6 +44977,8 @@
 	function Routes($stateProvider, $urlRouterProvider) {
 	  $urlRouterProvider.otherwise("/");
 
+	  // 'home' route accept a query 'q' as parameter
+	  // 'note' route recieve a note id 'id' as parameter
 	  $stateProvider
 	    .state('home', {
 	      url: "/{q}",
@@ -44992,7 +45002,7 @@
 /***/ function(module, exports) {
 
 	var path = '/home/gustavo/dev/personal/notes_app/src/home/home.template.html';
-	var html = "<navbar></navbar>\n\n<section ng-init=\"statusFilter = ''; strict = false\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-3\">\n        <div class=\"list-group\">\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = ''; strict = false\">\n            <i class=\"fa fa-files-o\" aria-hidden=\"true\"></i> Todas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'active'; strict = true\">\n            <i class=\"fa fa-bolt\" aria-hidden=\"true\"></i> Ativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'inactive'; strict = true\">\n            <i class=\"fa fa-ban\" aria-hidden=\"true\"></i> Inativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'draft'; strict = true\">\n            <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Rascunhos\n          </a>\n          <a href=\"#\" class=\"list-group-item disabled\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i> Minhas\n          </a>\n        </div>\n        <br>\n        <div class=\"text-center\">\n          <a href=\"#/note/\" class=\"btn btn-lg btn-success\">\n            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i> Nova Nota\n          </a>\n        </div>\n        <br>\n      </div>\n      <div class=\"col-md-9\">\n        <div class=\"row\">\n          <div class=\"text-center\" ng-if=\"homeCtrl.pages.length > 1\">\n            <nav aria-label=\"Page navigation\">\n              <ul class=\"pagination\">\n                <li>\n                  <a href=\"#\" aria-label=\"Previous\" ng-click=\"homeCtrl.goFirstPage()\">\n                    <span aria-hidden=\"true\">&laquo;</span>\n                  </a>\n                </li>\n                <div ng-repeat=\"page in homeCtrl.pages\">\n                  <li><a href=\"#\" ng-click=\"homeCtrl.getNotes('', page)\">{{ page }}</a></li>\n                </div>\n                <li>\n                  <a href=\"#\" aria-label=\"Next\" ng-click=\"homeCtrl.goLastPage()\">\n                    <span aria-hidden=\"true\">&raquo;</span>\n                  </a>\n                </li>\n              </ul>\n            </nav>\n          </div>\n          <div ng-repeat=\"note in homeCtrl.notes | filter:statusFilter:strict:comparator:status\">\n            <div class=\"col-sm-6 col-lg-6 col-md-6\">\n              <div class=\"thumbnail\">\n                <div class=\"caption\">\n                  <div class=\"note-title\">\n                    <a data-toggle=\"modal\" data-target=\"#myModal\" ng-click=\"homeCtrl.openModal(note)\">\n                      <i class=\"fa {{ note.faClass }} pull-right\" aria-hidden=\"true\"></i>\n                      <h4>{{ note.title | limitTo:30 }}</h4>\n                      <hr>\n                    </a>\n                  </div>\n                  <div class=\"note-body\" ng-bind-html=\"note.body | limitTo:460\"></div>\n                </div>\n                <div class=\"note-footer row\">\n                  <div class=\"col-xs-6 text-left\">\n                    <a ng-click=\"homeCtrl.goNote(note.id)\" class=\"btn btn-xs btn-info\">Editar</a>\n                  </div>\n                  <div class=\"col-xs-6 text-right\">\n                    <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ note.views }}</p>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n\n<div class=\"modal fade\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <div class=\"row\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n          <h3 class=\"modal-title\" id=\"myModalLabel\"><b>{{ homeCtrl.modalNote.title }}</b></h3>\n        </div>\n        <div class=\"row\">\n          <div class=\"col-xs-10 text-left\">\n            <p><b>Primeira visualização:</b> {{ homeCtrl.modalNote.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-2 text-right\">\n            <p>\n              <i class=\"fa {{ homeCtrl.modalNote.faClass }} modal-fa\" aria-hidden=\"true\"></i>\n              <i class=\"fa fa-eye\" aria-hidden=\"true\"></i>\n              {{ homeCtrl.modalNote.views }}\n            </p>\n          </div>\n        </div>\n      </div>\n      <div class=\"modal-body\">\n        <div ng-bind-html=\"homeCtrl.modalNote.body\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i> Fechar</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
+	var html = "<navbar></navbar>\n\n<section ng-init=\"statusFilter = ''; strict = false\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-3\">\n        <div class=\"list-group\">\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = ''; strict = false\">\n            <i class=\"fa fa-files-o\" aria-hidden=\"true\"></i> Todas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'active'; strict = true\">\n            <i class=\"fa fa-bolt\" aria-hidden=\"true\"></i> Ativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'inactive'; strict = true\">\n            <i class=\"fa fa-ban\" aria-hidden=\"true\"></i> Inativas\n          </a>\n          <a href=\"#\" class=\"list-group-item\" ng-click=\"statusFilter = 'draft'; strict = true\">\n            <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Rascunhos\n          </a>\n          <a href=\"#\" class=\"list-group-item disabled\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i> Minhas\n          </a>\n        </div>\n        <br>\n        <div class=\"text-center\">\n          <a href=\"#/note/\" class=\"btn btn-lg btn-success\">\n            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i> Nova Nota\n          </a>\n        </div>\n        <br>\n      </div>\n      <div class=\"col-md-9\">\n        <div class=\"row\">\n          <div class=\"text-center\" ng-if=\"homeCtrl.pages.length > 1\">\n            <nav aria-label=\"Page navigation\">\n              <ul class=\"pagination\">\n                <li>\n                  <a href=\"#\" aria-label=\"Previous\" ng-click=\"homeCtrl.goFirstPage()\">\n                    <span aria-hidden=\"true\">&laquo;</span>\n                  </a>\n                </li>\n                <div ng-repeat=\"page in homeCtrl.pages\">\n                  <li><a href=\"#\" ng-click=\"homeCtrl.getNotes('', page)\">{{ page }}</a></li>\n                </div>\n                <li>\n                  <a href=\"#\" aria-label=\"Next\" ng-click=\"homeCtrl.goLastPage()\">\n                    <span aria-hidden=\"true\">&raquo;</span>\n                  </a>\n                </li>\n              </ul>\n            </nav>\n          </div>\n          <div ng-repeat=\"note in homeCtrl.notes | filter:statusFilter:strict:comparator:status\">\n            <div class=\"col-sm-6 col-lg-6 col-md-6\">\n              <div class=\"thumbnail\">\n                <div class=\"caption\">\n                  <div class=\"note-title\">\n                    <a data-toggle=\"modal\" data-target=\"#myModal\" ng-click=\"homeCtrl.openModal(note)\">\n                      <i class=\"fa {{ note.faClass }} pull-right\" aria-hidden=\"true\"></i>\n                      <h4>{{ note.title | limitTo:30 }}</h4>\n                      <hr>\n                    </a>\n                  </div>\n                  <div class=\"note-body\" ng-bind-html=\"note.body\"></div>\n                </div>\n                <div class=\"note-footer row\">\n                  <div class=\"col-xs-6 text-left\">\n                    <a ng-click=\"homeCtrl.goNote(note.id)\" class=\"btn btn-xs btn-info\">Editar</a>\n                  </div>\n                  <div class=\"col-xs-6 text-right\">\n                    <p><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> {{ note.views }}</p>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n\n<div class=\"modal fade\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <div class=\"row\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n          <h3 class=\"modal-title\" id=\"myModalLabel\"><b>{{ homeCtrl.modalNote.title }}</b></h3>\n        </div>\n        <div class=\"row\">\n          <div class=\"col-xs-10 text-left\">\n            <p><b>Primeira visualização:</b> {{ homeCtrl.modalNote.first_seen }}</p>\n          </div>\n          <div class=\"col-xs-2 text-right\">\n            <p>\n              <i class=\"fa {{ homeCtrl.modalNote.faClass }} modal-fa\" aria-hidden=\"true\"></i>\n              <i class=\"fa fa-eye\" aria-hidden=\"true\"></i>\n              {{ homeCtrl.modalNote.views }}\n            </p>\n          </div>\n        </div>\n      </div>\n      <div class=\"modal-body\">\n        <div ng-bind-html=\"homeCtrl.modalNote.body\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i> Fechar</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
