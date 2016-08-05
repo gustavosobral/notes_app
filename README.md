@@ -18,3 +18,9 @@ Execute the following command to build the production files on bin/ folder.
 ```bash
 $ npm run build
 ```
+
+## ToDo's:
+
+* Write tests using Protractor
+* Modularize componentes (Modal) into directives
+* Add user authentication
