@@ -1,5 +1,5 @@
 # Notes App
-An collaborative application to store public notes from users.
+An collaborative application to store public notes from users. Check the application producing the API here: [Notes Server](https://github.com/gustavosobral/notes_server)
 
 ## Installation
 ```bash
