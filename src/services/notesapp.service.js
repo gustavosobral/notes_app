@@ -1,5 +1,6 @@
 function NotesappService($http, $q, $log) {
   var url = 'http://138.68.11.67/api/v1/notes';
+  var config = { timeout: 2000 };
 
   return {
     getNotes: getNotes,
@@ -21,7 +22,7 @@ function NotesappService($http, $q, $log) {
     } else {
       getUrl = url + '?page=' + page;
     }
-    return $http.get(getUrl)
+    return $http.get(getUrl, config)
       .then(getNotesComplete)
       .catch(getNotesFailed);
 
@@ -36,7 +37,7 @@ function NotesappService($http, $q, $log) {
   }
 
   function getNote(id) {
-    return $http.get(url + '/' + id)
+    return $http.get(url + '/' + id, config)
       .then(getNoteComplete)
       .catch(getNoteFailed);
 
@@ -53,7 +54,7 @@ function NotesappService($http, $q, $log) {
   function createNote(note) {
     data = {}
     data.note = note;
-    return $http.post(url, data)
+    return $http.post(url, data, config)
       .then(createNoteComplete)
       .catch(createNoteFailed);
 
@@ -70,7 +71,7 @@ function NotesappService($http, $q, $log) {
   function updateNote(note) {
     data = {}
     data.note = note;
-    return $http.put(url + '/' + note.id, data)
+    return $http.put(url + '/' + note.id, data, config)
       .then(updateNoteComplete)
       .catch(updateNoteFailed);
 
@@ -85,7 +86,7 @@ function NotesappService($http, $q, $log) {
   }
 
   function deleteNote(id) {
-    return $http.delete(url + '/' + id)
+    return $http.delete(url + '/' + id, config)
       .then(deleteNoteComplete)
       .catch(deleteNoteFailed);
 
