@@ -1,5 +1,6 @@
 var angular         = require('angular');
 var uiRouter        = require('angular-ui-router');
+var ngFlash         = require('angular-flash-alert');
 var textAngular     = require('textangular');
 
 var home  = require('home');
@@ -11,10 +12,10 @@ require('assets/scss/styles.scss');
 require('textangular/dist/textAngular-sanitize.min');
 
 var app = angular.module('notesApp', [
-  home, note, uiRouter, textAngular
+  home, note, uiRouter, textAngular, ngFlash
 ]);
 
-app.config(function($provide) {
+app.config(function($provide, FlashProvider) {
   $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions) {
     // Customize the textAngular toolbar
     taOptions.toolbar = [
@@ -25,6 +26,10 @@ app.config(function($provide) {
     ];
     return taOptions;
   }]);
+
+  // Configure angular-flash 
+  FlashProvider.setShowClose(true);
+  FlashProvider.setTimeout(10000);
 })
 
 app.config(Routes);

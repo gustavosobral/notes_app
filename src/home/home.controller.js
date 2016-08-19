@@ -1,4 +1,4 @@
-function HomeController($log, $state, $stateParams, NotesappService) {
+function HomeController($log, $state, $scope, $stateParams, NotesappService, Flash) {
   var vm = this;
   vm.notes = [];
   vm.pages = [];
@@ -49,7 +49,7 @@ function HomeController($log, $state, $stateParams, NotesappService) {
         }
       })
       .catch(function(e) {
-        $state.go('home');
+        $scope.dangerAlert();
       });
   }
 
@@ -71,6 +71,11 @@ function HomeController($log, $state, $stateParams, NotesappService) {
     vm.modalNote = note;
     // Make a GET to increase Note views counter
     NotesappService.getNote(note.id);
+  }
+
+  $scope.dangerAlert = function() {
+    var message = '<strong>Ocorreu um erro!</strong> Por favor, tente novamente mais tarde.';
+    Flash.create('danger', message);
   }
 }
 

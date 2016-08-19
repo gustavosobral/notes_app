@@ -1,4 +1,4 @@
-function NoteController($log, $state, $stateParams, NotesappService) {
+function NoteController($log, $state, $scope, $stateParams, NotesappService, Flash) {
   var vm = this;
   vm.note = {};
   vm.noteStatus = "Ativa";
@@ -20,8 +20,6 @@ function NoteController($log, $state, $stateParams, NotesappService) {
 
   // Controller initailization
   function initialize() {
-    jQuery('#note-alert').hide();
-
     // Go try to get a note if there is a passed 'id' param
     if($stateParams.id)
       getNote($stateParams.id);
@@ -45,7 +43,7 @@ function NoteController($log, $state, $stateParams, NotesappService) {
 
     // Show warning alert on user invalid input
     if(!vm.note.title || !vm.note.body) {
-      jQuery('#note-alert').show();
+      $scope.warningAlert();
       return;
     }
 
@@ -82,7 +80,13 @@ function NoteController($log, $state, $stateParams, NotesappService) {
       })
       .catch(function(e) {
         $state.go('home');
-      });;
+      });
+  }
+
+  $scope.warningAlert = function() {
+    var message = '<strong>Atenção!</strong> Verifique se os campos de <strong>Título</strong> e ' +
+                  '<strong>Corpo</strong> estão devidamente preenchidos para concluir uma anotação válida.';
+    Flash.create('warning', message);
   }
 }
 
